@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet id="201909101615_add_audit_event" author="cherepanov">
+        <createTable tableName="audit_event">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="audit_event_expert_pk"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="event_time" type="timestamp">
+                <constraints nullable="false" />
+            </column>
+            <column name="type" type="varchar">
+                <constraints nullable="false" />
+            </column>
+            <column name="parameters" type="jsonb"/>
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="fk_user"
+                                 baseTableName="audit_event" baseColumnNames="user_id"
+                                 referencedTableName="app_user" referencedColumnNames="id" />
+    </changeSet>
+
+</databaseChangeLog>

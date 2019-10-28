@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="cherepanov" id="201908091653_add_units">
+
+        <createTable tableName="unit">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="unit_expert_pk"/>
+            </column>
+            <column name="title" type="varchar">
+                <constraints nullable="false" />
+            </column>
+            <column name="code" type="varchar">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+
+        <loadData encoding="UTF-8"
+                  file="config/liquibase/units.csv"
+                  separator=";"
+                  tableName="unit"/>
+
+        <addColumn tableName="app_user">
+            <column name="unit_id" type="BIGINT">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+
+        <addForeignKeyConstraint constraintName="fk_unit"
+                                 baseTableName="app_user" baseColumnNames="unit_id"
+                                 referencedTableName="unit" referencedColumnNames="id" />
+    </changeSet>
+</databaseChangeLog>

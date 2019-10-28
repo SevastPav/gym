@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!--
+        Added the entity ClientSystem.
+    -->
+    <changeSet id="20191028185811_add_table_test" author="spm">
+        <sql>
+            CREATE TABLE "common_info" (
+            "common_id" serial NOT NULL,
+            "fio" char(255) NOT NULL,
+            "role" int NOT NULL,
+            "login" char(255) NOT NULL,
+            "password" char(255) NOT NULL,
+            "birthday" DATE NOT NULL,
+            "phone" char(255) NOT NULL,
+            "entry_date" DATE NOT NULL,
+            "client_profile" int,
+            "trainer_profile" int,
+            "admin_profile" int,
+            CONSTRAINT "common_info_pk" PRIMARY KEY ("common_id")
+            );
+
+
+
+            CREATE TABLE "client_profile" (
+            "client_id" serial NOT NULL,
+            "balance" int NOT NULL,
+            "training" int,
+            CONSTRAINT "client_profile_pk" PRIMARY KEY ("client_id")
+            );
+
+
+
+            CREATE TABLE "trainer_profile" (
+            "trainer_id" int NOT NULL,
+            "balance" int NOT NULL,
+            "training" int NOT NULL,
+            CONSTRAINT "trainer_profile_pk" PRIMARY KEY ("trainer_id")
+            );
+
+
+
+            CREATE TABLE "admin_profile" (
+            "admin_id" serial NOT NULL,
+            CONSTRAINT "admin_profile_pk" PRIMARY KEY ("admin_id")
+            );
+
+
+
+            CREATE TABLE "training" (
+            "training_id" int NOT NULL,
+            "trainer_id" int NOT NULL,
+            "date" DATE NOT NULL,
+            "title" char(255) NOT NULL,
+            "description" char(255) NOT NULL,
+            "participant_size" int NOT NULL,
+            "level" int,
+            CONSTRAINT "training_pk" PRIMARY KEY ("training_id")
+            );
+
+
+
+            CREATE TABLE "level" (
+            "level_id" serial NOT NULL,
+            "title" char NOT NULL,
+            "description" char,
+            CONSTRAINT "level_pk" PRIMARY KEY ("level_id")
+            );
+
+
+
+            CREATE TABLE "role" (
+            "role_id" serial NOT NULL,
+            "title" char NOT NULL,
+            "description" char NOT NULL,
+            CONSTRAINT "role_pk" PRIMARY KEY ("role_id")
+            );
+
+
+
+            CREATE TABLE "client_training" (
+            "relation_id" serial NOT NULL,
+            "client_id" int NOT NULL,
+            "training_id" int NOT NULL,
+            CONSTRAINT "client_training_pk" PRIMARY KEY ("relation_id")
+            );
+
+
+
+            ALTER TABLE "common_info" ADD CONSTRAINT "common_info_fk0" FOREIGN KEY ("role") REFERENCES "role"("role_id");
+            ALTER TABLE "common_info" ADD CONSTRAINT "common_info_fk1" FOREIGN KEY ("client_profile") REFERENCES "client_profile"("client_id");
+            ALTER TABLE "common_info" ADD CONSTRAINT "common_info_fk2" FOREIGN KEY ("trainer_profile") REFERENCES "trainer_profile"("trainer_id");
+            ALTER TABLE "common_info" ADD CONSTRAINT "common_info_fk3" FOREIGN KEY ("admin_profile") REFERENCES "admin_profile"("admin_id");
+
+
+
+
+            ALTER TABLE "training" ADD CONSTRAINT "training_fk0" FOREIGN KEY ("trainer_id") REFERENCES "trainer_profile"("trainer_id");
+            ALTER TABLE "training" ADD CONSTRAINT "training_fk1" FOREIGN KEY ("level") REFERENCES "level"("level_id");
+
+
+
+            ALTER TABLE "client_training" ADD CONSTRAINT "client_training_fk0" FOREIGN KEY ("client_id") REFERENCES "client_profile"("client_id");
+            ALTER TABLE "client_training" ADD CONSTRAINT "client_training_fk1" FOREIGN KEY ("training_id") REFERENCES "training"("training_id");
+        </sql>
+    </changeSet>
+    <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->
+</databaseChangeLog>

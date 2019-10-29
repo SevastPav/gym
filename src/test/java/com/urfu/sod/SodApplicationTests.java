@@ -1,31 +1,22 @@
 package com.urfu.sod;
 
-import com.urfu.sod.entity.AdminProfile;
-import com.urfu.sod.entity.CommonInfo;
+import com.urfu.sod.entity.Training;
+import com.urfu.sod.entity.UserProfile;
 import com.urfu.sod.entity.Role;
-import com.urfu.sod.repository.AdminProfileRepository;
-import com.urfu.sod.repository.CommonInfoRepository;
+import com.urfu.sod.repository.TrainingRepository;
+import com.urfu.sod.repository.UserProfileRepository;
 import com.urfu.sod.repository.RoleRepository;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.xml.crypto.Data;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,10 +31,10 @@ class SodApplicationTests {
 	private RoleRepository roleRepository;
 
 	@Autowired
-	private AdminProfileRepository adminProfileRepository;
-
+	private UserProfileRepository userProfileRepository;
+	
 	@Autowired
-	private CommonInfoRepository commonInfoRepository;
+	private TrainingRepository trainingRepository;
 
 	@Test
 	void roleTest() {
@@ -57,7 +48,6 @@ class SodApplicationTests {
 	}
 
 	@Test
-	@Transactional
 	void commonTest() {
 		Role role;
 		List<Role> resultList = roleRepository.findAll();
@@ -67,21 +57,12 @@ class SodApplicationTests {
 			role = new Role();
 			role.setTitle("User");
 			role.setDescription("Desc");
-			em.persist(role);
+			roleRepository.save(role);
 		}
 
-		AdminProfile adminProfile;
-		List<AdminProfile> resultAdminList = adminProfileRepository.findAll();
-		if(resultAdminList.size() != 0)
-			adminProfile = resultAdminList.get(0);
-		else{
-			adminProfile = new AdminProfile();
-			em.persist(adminProfile);
-		}
+		List<UserProfile> forEqualsList = userProfileRepository.findAll();
 
-		List<CommonInfo> forEqualsList = commonInfoRepository.findAll();
-
-		CommonInfo common = new CommonInfo();
+		UserProfile common = new UserProfile();
 		common.setRoleId(role);
 		common.setFio("Test");
 		common.setBirthday(LocalDateTime.now());
@@ -89,15 +70,36 @@ class SodApplicationTests {
 		common.setPhone("123");
 		common.setLogin("Login");
 		common.setPassword("Password");
-		common.setAdminProfile(adminProfile);
 
-		em.merge(common);
+		userProfileRepository.save(common);
 
 		List<Role> resultListForEq = roleRepository.findAll();
 		if(forEqualsList.size() != 0)
 			assertThat(forEqualsList.size() - 1).isEqualTo(resultListForEq.size());
 		else
 			assertThat(1).isEqualTo(resultListForEq.size());
+	}
+
+	@Transactional
+	void appendUser(Training training, UserProfile user){
+		List<UserProfile> asd = training.getClients();
+		asd.add(user);
+		training.setClients(asd);
+	}
+
+	@Test
+	void trainingTest() {
+		List<UserProfile> userList = userProfileRepository.findAll();
+		if(userList.size() == 0)
+			return;
+		
+		UserProfile user = userList.get(0);
+
+		Training training = new Training();
+		trainingRepository.save(training);
+
+		user.getClientTrainings().add(training);
+		userProfileRepository.save(user);
 	}
 
 }

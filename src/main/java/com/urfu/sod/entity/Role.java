@@ -4,7 +4,6 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -30,5 +29,5 @@ public class Role implements Serializable {
     private String description;
 
     @OneToMany(mappedBy="roleId", cascade = CascadeType.ALL)
-    public List<CommonInfo> commonInfos;
+    public List<UserProfile> userProfiles;
 }

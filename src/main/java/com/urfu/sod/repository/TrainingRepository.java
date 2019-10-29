@@ -1,9 +1,11 @@
 package com.urfu.sod.repository;
 
-import com.urfu.sod.entity.AdminProfile;
+import com.urfu.sod.entity.Role;
+import com.urfu.sod.entity.Training;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,8 +16,9 @@ import java.util.Optional;
  */
 //@SuppressWarnings("unused")
 @Repository
-public interface AdminProfileRepository extends JpaRepository<AdminProfile, Long>, JpaSpecificationExecutor<AdminProfile> {
+@Transactional
+public interface TrainingRepository extends JpaRepository<Training, Long>, JpaSpecificationExecutor<Training> {
 
-    List<AdminProfile> findAll();
+    List<Training> findAll();
 
 }

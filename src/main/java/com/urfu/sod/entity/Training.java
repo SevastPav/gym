@@ -25,18 +25,18 @@ public class Training implements Serializable {
     private Long trainingId;
 
     @ManyToOne
-    @JoinColumn(name="trainer_id", nullable = false)
-    private TrainerProfile trainerId;
+    @JoinColumn(name="trainer_id")
+    private UserProfile trainerId;
 
-    @Column(name = "datetime", nullable = false)
+    @Column(name = "datetime")
     private ZonedDateTime dateTime;
 
-    @Column(name = "title", nullable = false, length = 255)
+    @Column(name = "title", length = 255)
     private String title;
 
-    @Column(name = "description", nullable = false, length = 255)
+    @Column(name = "description", length = 255)
     private String description;
 
-    @ManyToMany(mappedBy = "clientTrainings", cascade = CascadeType.ALL)
-    List<ClientProfile> clients;
+    @ManyToMany(mappedBy = "clientTrainings", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    List<UserProfile> clients;
 }

@@ -5,22 +5,23 @@ import lombok.Data;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * A ClientSystem.
  */
 @Data
 @Entity
-@Table(name = "common_info")
-public class CommonInfo implements Serializable {
+@Table(name = "user_profile")
+public class UserProfile implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGeneratorForCommonInfo")
     @SequenceGenerator(name = "sequenceGeneratorForCommonInfo")
-    @Column(name = "common_id", nullable = false, unique = true)
-    private Long commonId;
+    @Column(name = "user_id", nullable = false, unique = true)
+    private Long userId;
 
     @Column(name = "fio", nullable = false)
     private String fio;
@@ -35,24 +36,25 @@ public class CommonInfo implements Serializable {
     @Column(name = "password", nullable = false, length = 255)
     private String password;
 
-    @Column(name = "birthday", nullable = false)
+    @Column(name = "birthday")
     private LocalDateTime birthday;
 
-    @Column(name = "phone", nullable = false, length = 255)
+    @Column(name = "phone", length = 255)
     private String phone;
 
-    @Column(name = "entry_date", nullable = false)
+    @Column(name = "entry_date")
     private LocalDateTime entryDate;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "client_id")
-    private ClientProfile clientProfile;
+    @Column(name = "balance")
+    private Integer balance;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "trainer_id")
-    private TrainerProfile trainerProfile;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "client_training",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "training_id"))
+    List<Training> clientTrainings;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "admin_id")
-    private AdminProfile adminProfile;
+    @OneToMany(mappedBy="trainerId", cascade = CascadeType.ALL)
+    private List<Training> trainings;
 }

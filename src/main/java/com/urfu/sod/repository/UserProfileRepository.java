@@ -1,11 +1,13 @@
 package com.urfu.sod.repository;
 
 import com.urfu.sod.entity.Role;
+import com.urfu.sod.entity.UserProfile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -15,10 +17,12 @@ import java.util.Optional;
 //@SuppressWarnings("unused")
 @Repository
 @Transactional
-public interface RoleRepository extends JpaRepository<Role, Long>, JpaSpecificationExecutor<Role> {
+public interface UserProfileRepository extends JpaRepository<UserProfile, Long>, JpaSpecificationExecutor<UserProfile> {
 
-    Optional<Role> findByRoleId(Long roleId);
+    List<UserProfile> findAll();
 
-    Optional<Role> findByTitle(String title);
+    List<UserProfile> findByRoleId(Role role);
+
+    Optional<UserProfile>  findByUserId(Long userId);
 
 }

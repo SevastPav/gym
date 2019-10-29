@@ -1,10 +1,11 @@
 package com.urfu.sod.repository;
 
-import com.urfu.sod.entity.ClientSystem;
+import com.urfu.sod.entity.AdminProfile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -13,8 +14,8 @@ import java.util.Optional;
  */
 //@SuppressWarnings("unused")
 @Repository
-public interface ClientSystemRepository extends JpaRepository<ClientSystem, Long>, JpaSpecificationExecutor<ClientSystem> {
+public interface AdminProfileRepository extends JpaRepository<AdminProfile, Long>, JpaSpecificationExecutor<AdminProfile> {
 
-    Optional<ClientSystem> findById(String Id);
+    List<AdminProfile> findAll();
 
 }

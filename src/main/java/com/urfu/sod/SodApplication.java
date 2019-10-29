@@ -1,7 +1,5 @@
 package com.urfu.sod;
 
-import com.urfu.sod.entity.ClientSystem;
-import com.urfu.sod.repository.ClientSystemRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +24,9 @@ import java.util.Collection;
 @ComponentScan(basePackages = {"com.urfu"})
 @EnableAutoConfiguration
 @EnableConfigurationProperties({LiquibaseProperties.class})
-@EntityScan(basePackages = {"com.urfu"})
+//@EntityScan(basePackages = {"com.urfu"})
 @SpringBootConfiguration
 public class SodApplication {
-
-	@Autowired
-	private ClientSystemRepository clientSystemRepository;
 
 	private static final Logger log = LoggerFactory.getLogger(SodApplication.class);
 

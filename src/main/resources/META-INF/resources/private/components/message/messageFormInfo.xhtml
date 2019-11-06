@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+>
+    <p:commandButton value="СКАЧАТЬ" ajax="false" onclick="PrimeFaces.monitorDownload(start, stop);">
+        <p:fileDownload value="#{downloadMessageBean.getFileFromDocument(message.documentId, message.envelopeId)}"/>
+    </p:commandButton>
+    <div class="messageInfoLayout__wrapper">
+        <p:fieldset legend="Сообщение" toggleable="true" toggleSpeed="500">
+            <ui:insert name = "messageCommonInfo" >
+                <ui:include src = "common/messageCommonInfo.xhtml" >
+                    <ui:param name = "message" value = "#{message}" />
+                </ui:include>
+            </ui:insert>
+            <ui:insert name = "messageDescription" >
+                <ui:include src = "common/messageDescription.xhtml" >
+                    <ui:param name = "message" value = "#{message}" />
+                </ui:include>
+            </ui:insert>
+        </p:fieldset>
+        <p:fieldset legend="Участники" toggleable="true" toggleSpeed="500">
+            <ui:insert name = "messageParticipant" >
+                <ui:include src = "common/messageParticipants.xhtml" >
+                    <ui:param name = "message" value = "#{message}" />
+                </ui:include>
+            </ui:insert>
+        </p:fieldset>
+        <p:fieldset legend="Документ" toggleable="true" toggleSpeed="500">
+            <ui:insert name = "messageDocument" >
+                <ui:include src = "common/messageDocumentInfo.xhtml" >
+                    <ui:param name = "message" value = "#{message}" />
+                </ui:include>
+            </ui:insert>
+        </p:fieldset>
+        <p:fieldset legend="Дополнительно" toggleable="true" toggleSpeed="500">
+            <ui:insert name = "messageAdditionalInfo" >
+                <ui:include src = "common/messageAdditionalInfo.xhtml" >
+                    <ui:param name = "message" value = "#{message}" />
+                </ui:include>
+            </ui:insert>
+        </p:fieldset>
+    </div>
+</ui:composition>

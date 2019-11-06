@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+    <h:panelGrid columns="1" cellpadding="5">
+        <h:outputText value="Идентификатор сообщения:"/>
+
+        <h:outputText value="#{message.envelopeId}"/>
+
+        <h:outputText value="Дата:"/>
+
+        <h:outputText rendered="#{message.receiveDate ne null}"
+                      value="#{message.receiveDate}"
+                      converter="#{zonedDateTimeConverter.of(DATE_TIME_FORMAT)}"/>
+        <h:outputText rendered="#{message.sendDate ne null}"
+                      value="#{message.sendDate}"
+                      converter="#{zonedDateTimeConverter.of(DATE_TIME_FORMAT)}"/>
+
+        <h:outputText value="Версия обмена:"/>
+
+        <h:outputText rendered="#{message.softVersion ne null}"
+                      value="#{message.softVersion}"/>
+        <h:outputText rendered="#{message.softVersion == null}"
+                      value="—"/>
+
+        <h:outputText value="Идентификатор документа:"/>
+        <h:outputText value="#{message.documentId}"/>
+
+    </h:panelGrid>
+</ui:composition>
+
+<!-- Old tooltips, doesn't need right now - delete after approve -->
+<!--<h:outputText value="IncomeEnvelopeID:"/>
+<h:outputText rendered="#{message.incomeEnvelopeId ne null}" value="#{message.incomeEnvelopeId}"/>
+<h:outputText rendered="#{message.incomeEnvelopeId == null}" value=""/>
+
+<h:outputText value="InitialEnvelopeID:"/>
+<h:outputText rendered="#{message.initialEnvelopeId ne null}" value="#{message.initialEnvelopeId}"/>
+<h:outputText rendered="#{message.initialEnvelopeId == null}" value=""/>
+
+<h:outputText value="ParticipantID:"/>
+
+<h:outputText rendered="#{message.participantId ne null}"
+              value="#{message.participantId}"/>
+<h:outputText rendered="#{message.participantId == null}"
+              value=""/>
+
+<h:outputText value="Отправитель:"/>
+<h:outputText rendered="#{message.senderInformation ne null}" value="#{message.senderInformation}"/>
+<h:outputText rendered="#{message.senderInformation == null}" value=""/>
+
+<h:outputText value="Код ТО отправителя:"/>
+<h:outputText rendered="#{message.senderCustomCode ne null}" value="#{message.senderCustomCode}"/>
+<h:outputText rendered="#{message.senderCustomCode == null}" value=""/>
+
+<h:outputText value="Получатель:"/>
+<h:outputText rendered="#{message.receiverInformation ne null}" value="#{message.receiverInformation}"/>
+<h:outputText rendered="#{message.receiverInformation == null}" value=""/>
+
+<h:outputText value="Код ТО получателя:"/>
+<h:outputText rendered="#{message.rcvCustomCode ne null}" value="#{message.rcvCustomCode}"/>
+<h:outputText rendered="#{message.rcvCustomCode == null}" value=""/>
+
+<h:outputText value="Результат обработки:"/>
+<h:outputText rendered="#{message.resultCode ne null}" value="#{message.resultCode}"/>
+<h:outputText rendered="#{message.resultCode == null}" value=""/>-->

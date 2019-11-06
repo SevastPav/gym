@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+    <h:panelGrid columns="2" cellpadding="5">
+        <h:outputText value="Идентификатор:"/>
+        <h:outputText value="#{participant.participantId}"/>
+        
+        <h:outputText value="Транспортный адрес:"/>
+        <h:outputText value="#{participant.transportAddress}"/>
+
+        <h:outputText value="Наименование:"/>
+        <h:outputText value="#{participant.name}"/>
+
+        <h:outputText value="Информационный оператор:"/>
+        <h:outputText value="#{participant.infBrokerId}"/>
+
+        <h:outputText rendered="#{participant.startDate ne null}" value="Дата начала действия:"/>
+        <h:outputText rendered="#{participant.startDate ne null}"
+                      value="#{participant.startDate}"/>
+
+        <h:outputText rendered="#{participant.endDate ne null}" value="Дата окончания действия:"/>
+        <h:outputText rendered="#{participant.endDate ne null}"
+                      value="#{participant.endDate}"/>
+
+        <h:outputText value="Комментарии:"/>
+        <h:outputText value="#{participant.comments}"/>
+
+    </h:panelGrid>
+</ui:composition>
+
+    <!--Комментарий Димы Плутова - infBrokerId: Значение должно выводится наименование организации по указнному идентификатору из таблицы EDMAC_ORGANIZATION. -->
+
+<!--
+05.08.2019
+Удаленные поля по просьбе Димы Плутова:
+
+        <h:outputText value="fullStateAccessMode:"/>
+
+        <h:outputText value="#{participant.fullStateAccessMode}"/>
+
+        <h:outputText value="transferType:"/>
+        <h:outputText value="#{participant.transferType}"/>
+
+        <h:outputText value="svhName:"/>
+        <h:outputText value="#{participant.svhName}"/>
+
+        <h:outputText value="svhLicNum:"/>
+        <h:outputText value="#{participant.svhLicNum}"/>
+
+        <h:outputText value="orgId:"/>
+        <h:outputText value="#{participant.orgId}"/>
+
+        <h:outputText value="codeDocument:"/>
+        <h:outputText value="#{participant.codeDocument}"/>
+
+        <h:outputText value="accessMode:"/>
+        <h:outputText value="#{participant.accessMode}"/>
+
+        <h:outputText value="accInfo:"/>
+        <h:outputText value="#{participant.accInfo}"/>
+
+        <h:outputText value="address:"/>
+        <h:outputText value="#{participant.address}"/>
+
+        <h:outputText value="changeAccessReason:"/>
+        <h:outputText value="#{participant.changeAccessReason}"/>
+
+        <h:outputText rendered="#{participant.contractDate ne null}" value="contractDate:"/>
+
+        <h:outputText rendered="#{participant.contractDate ne null}"
+                      value="#{participant.contractDate}"/>
+
+        <h:outputText rendered="#{participant.changeDateTine ne null}" value="changeDateTine:"/>
+
+        <h:outputText rendered="#{participant.changeDateTine ne null}"
+                      value="#{participant.changeDateTine}"/>
+
+-->

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:composite="http://java.sun.com/jsf/composite" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<composite:interface>
+    <composite:attribute name="styleClass"/>
+    <composite:attribute name="header"/>
+</composite:interface>
+
+<composite:implementation>
+    <p:panel styleClass="#{cc.attrs.styleClass}" header="#{cc.attrs.header}">
+        <composite:insertChildren/>
+        <c:forEach var="element" items="#{cc}">
+            <h:outputText value="Id #{element.attrs.title}"/>
+            <c:forEach var="attr" items="#{element.attributes}">
+                <h:outputText value="Rtrt #{attr.key}"/>
+            </c:forEach>
+        </c:forEach>
+        <p:selectCheckboxMenu label="Фильтры">
+            <c:forEach var="element" items="#{cc.children}">
+                <f:selectItem itemLabel="#{element.attributes.get('title').value}" itemValue="#{element.id}"/>
+            </c:forEach>
+        </p:selectCheckboxMenu>
+    </p:panel>
+</composite:implementation>
+
+</html>

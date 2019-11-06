@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+
+                <h:panelGrid columns="1" cellpadding="5">
+                    <h:outputText value="Описание:"/>
+
+                    <h:outputText rendered="#{message.msgDesc ne null}"
+                                  value="#{message.msgDesc}"/>
+                    <h:outputText rendered="#{message.msgDesc == null}"
+                                  value="—"/>
+
+                    <h:outputText value="EnvelopeID:"/>
+                    <h:outputText value="#{message.envelopeId}"/>
+
+                    <h:outputText value="IncomeEnvelopeID:"/>
+                    <h:outputText rendered="#{message.incomeEnvelopeId ne null}" value="#{message.incomeEnvelopeId}"/>
+                    <h:outputText rendered="#{message.incomeEnvelopeId == null}" value="—"/>
+
+                    <h:outputText value="InitialEnvelopeID:"/>
+                    <h:outputText rendered="#{message.initialEnvelopeId ne null}" value="#{message.initialEnvelopeId}"/>
+                    <h:outputText rendered="#{message.initialEnvelopeId == null}" value="—"/>
+                </h:panelGrid>
+
+</ui:composition>

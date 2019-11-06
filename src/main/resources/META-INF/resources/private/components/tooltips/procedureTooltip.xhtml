@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+    <h:panelGrid columns="2" cellpadding="5">
+        <h:outputText value="processId:"/>
+
+        <h:outputText value="#{procedure.processId}"/>
+
+        <h:outputText value="mainProcessId:"/>
+
+        <h:outputText value="#{procedure.mainProcessId}"/>
+        
+        <h:outputText value="transferType:"/>
+
+        <h:outputText value="#{procedure.transferType}"/>
+
+        <h:outputText value="custProcedureCode:"/>
+        <h:outputText value="#{procedure.custProcedureCode}"/>
+
+        <h:outputText value="softVersion:"/>
+        <h:outputText value="#{procedure.softVersion}"/>
+
+        <h:outputText value="gtdIdCustCode:"/>
+
+        <h:outputText value="#{procedure.gtdIdCustCode}"/>
+
+        <h:outputText rendered="#{procedure.gtdIdDate ne null}" value="gtdIdDate:"/>
+
+        <h:outputText rendered="#{procedure.gtdIdDate ne null}"
+                      value="#{procedure.gtdIdDate}"/>
+
+        <h:outputText value="gtdIdRegNum:"/>
+        <h:outputText value="#{procedure.gtdIdRegNum}"/>
+
+        <h:outputText value="currentState:"/>
+        <h:outputText value="#{procedure.currentState}"/>
+
+        <h:outputText value="liveMode:"/>
+        <h:outputText value="#{procedure.liveMode}"/>
+
+        <h:outputText value="participantId:"/>
+        <h:outputText value="#{procedure.participantId}"/>
+
+        <h:outputText value="borderCustCode:"/>
+        <h:outputText value="#{procedure.borderCustCode}"/>
+
+        <h:outputText value="udFlag:"/>
+        <h:outputText value="#{procedure.udFlag}"/>
+
+        <h:outputText value="custCode:"/>
+        <h:outputText value="#{procedure.custCode}"/>
+
+        <h:outputText value="exchType:"/>
+        <h:outputText value="#{procedure.exchType}"/>
+
+        <h:outputText value="compressType:"/>
+        <h:outputText value="#{procedure.compressType}"/>
+
+        <h:outputText value="flags:"/>
+        <h:outputText value="#{procedure.flags}"/>
+
+        <h:outputText value="auxParticipantId:"/>
+        <h:outputText value="#{procedure.auxParticipantId}"/>
+
+        <h:outputText value="auxParticipantType:"/>
+        <h:outputText value="#{procedure.auxParticipantType}"/>
+
+        <h:outputText value="auxParticipantMode:"/>
+        <h:outputText value="#{procedure.auxParticipantMode}"/>
+
+        <h:outputText value="agreementId:"/>
+        <h:outputText value="#{procedure.agreementId}"/>
+
+        <h:outputText value="agreementParticipantId:"/>
+        <h:outputText value="#{procedure.agreementParticipantId}"/>
+
+        <h:outputText value="agreementNotificationFlag:"/>
+        <h:outputText value="#{procedure.agreementNotificationFlag}"/>
+
+        <h:outputText value="procEECFlag:"/>
+        <h:outputText value="#{procedure.procEECFlag}"/>
+
+        <h:outputText value="stateInfo:"/>
+        <h:outputText value="#{procedure.stateInfo}"/>
+
+        <h:outputText value="exchDescription:"/>
+        <h:outputText value="#{procedure.exchDescription}"/>
+
+    </h:panelGrid>
+</ui:composition>

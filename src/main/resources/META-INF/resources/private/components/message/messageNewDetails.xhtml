@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" xmlns:h="http://xmlns.jcp.org/jsf/html"
+>
+    <p:dialog styleClass="modal-window" header="Информация о сообщении" widgetVar="messageNewDetailsDlg" modal="true"
+              resizable="false" id="messageNewDetailsDlg">
+        <p:tabView rendered="#{messagesEdgateBean.selected ne null}">
+            <p:tab id="message__details" title="Сообщение">
+                <div class="message-details__wrapper">
+                    <h:outputLabel class="modal__add-custom__row-label" for="processingnDateTime" value="Дата "/>
+                    <p:inputText class="modal__add-custom__row-input" id="processingnDateTime" disabled="true"
+                                 value="#{messagesEdgateBean.selected.processingnDateTime}"
+                                 converter="#{zonedDateTimeConverter.of(DATE_TIME_FORMAT)}">
+                    </p:inputText>
+                </div>
+                <div class="message-details__wrapper">
+                    <h:outputLabel class="modal__add-custom__row-label" for="softVersion" value="Версия обмена "/>
+                    <p:inputText class="modal__add-custom__row-input" id="softVersion" disabled="true"
+                                 value="#{messagesEdgateBean.selected.softVersion}">
+                    </p:inputText>
+                </div>
+                <div class="message-details__wrapper">
+                    <h:outputLabel class="modal__add-custom__row-label" for="messageType" value="Тип сообщения "/>
+                    <p:inputText class="modal__add-custom__row-input" id="messageType" disabled="true"
+                                 value="#{messagesEdgateBean.selected.messageType}">
+                    </p:inputText>
+                </div>
+                <div class="message-details__wrapper">
+                    <h:outputLabel class="modal__add-custom__row-label" for="messageKind" value="Вид сообщения "/>
+                    <p:inputText class="modal__add-custom__row-input" id="messageKind" disabled="true"
+                                 value="#{messagesEdgateBean.selected.messageKind}">
+                    </p:inputText>
+                </div>
+                <div class="message-details__wrapper">
+                    <h:outputLabel class="modal__add-custom__row-label" for="envelopeId" value="EnvelopeID "/>
+                    <p:inputText class="modal__add-custom__row-input" id="envelopeId" disabled="true"
+                                 value="#{messagesEdgateBean.selected.envelopeId}">
+                    </p:inputText>
+                </div>
+                <div class="message-details__wrapper">
+                    <h:outputLabel class="modal__add-custom__row-label" for="initialEnvelopeId" value="InitialEnvelopeID "/>
+                    <p:inputText class="modal__add-custom__row-input" id="initialEnvelopeId" disabled="true"
+                                 value="#{messagesEdgateBean.selected.initialEnvelopeId}">
+                    </p:inputText>
+                </div>
+            </p:tab>
+            <p:tab title="Участники">
+                <div class="message-details__wrapper">
+                    <h:outputLabel class="modal__add-custom__row-label" for="participantId" value="ParticipantId "/>
+                    <p:inputText class="modal__add-custom__row-input" id="participantId" disabled="true"
+                                 value="#{messagesEdgateBean.selected.participantId}">
+                    </p:inputText>
+                </div>
+                <div class="message-details__wrapper">
+                    <h:outputLabel class="modal__add-custom__row-label" for="senderInformation" value="Отправитель "/>
+                    <p:inputText class="modal__add-custom__row-input" id="senderInformation" disabled="true"
+                                 value="#{messagesEdgateBean.selected.senderInformation}">
+                    </p:inputText>
+                </div>
+                <div class="message-details__wrapper">
+                    <h:outputLabel class="modal__add-custom__row-label" for="senderCustomsCode" value="Код ТО отправителя "/>
+                    <p:inputText class="modal__add-custom__row-input" id="senderCustomsCode" disabled="true"
+                                 value="#{messagesEdgateBean.selected.senderCustomsCode}">
+                    </p:inputText>
+                </div>
+                <div class="message-details__wrapper">
+                    <h:outputLabel class="modal__add-custom__row-label" for="receiverInformation" value="Получатель "/>
+                    <p:inputText class="modal__add-custom__row-input" id="receiverInformation" disabled="true"
+                                 value="#{messagesEdgateBean.selected.receiverInformation}">
+                    </p:inputText>
+                </div>
+                <div class="message-details__wrapper">
+                    <h:outputLabel class="modal__add-custom__row-label" for="senderCustomsCode" value="Код ТО получателя "/>
+                    <p:inputText class="modal__add-custom__row-input" id="receiverCustomsCode" disabled="true"
+                                 value="#{messagesEdgateBean.selected.receiverCustomsCode}">
+                    </p:inputText>
+                </div>
+            </p:tab>
+            <p:tab title="Дополнительно">
+                <div class="message-details__wrapper">
+                    <h:outputLabel class="modal__add-custom__row-label" for="coaDateTime" value="Создание COA "/>
+                    <p:inputText class="modal__add-custom__row-input" id="coaDateTime" disabled="true"
+                                 value="#{messagesEdgateBean.selected.coaDateTime}">
+                    </p:inputText>
+                </div>
+                <div class="message-details__wrapper">
+                    <h:outputLabel class="modal__add-custom__row-label" for="coaSaveDateTime" value="Получение COA "/>
+                    <p:inputText class="modal__add-custom__row-input" id="coaSaveDateTime" disabled="true"
+                                 value="#{messagesEdgateBean.selected.coaSaveDateTime}">
+                    </p:inputText>
+                </div>
+            </p:tab>
+        </p:tabView>
+    </p:dialog>
+
+</ui:composition>

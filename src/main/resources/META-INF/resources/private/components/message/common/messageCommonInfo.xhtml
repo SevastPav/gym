@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+>
+
+    <h:panelGrid styleClass="messageInfoLayout__message-date" columns="2" cellpadding="5">
+        <h:outputText value="Дата:"/>
+
+        <h:outputText value="Версия обмена:"/>
+        <h:outputText rendered="#{message.receiveDate ne null}"
+                      value="#{message.receiveDate}"
+                      converter="#{zonedDateTimeConverter.of(DATE_TIME_FORMAT)}"/>
+        <h:outputText rendered="#{message.sendDate ne null}"
+                      value="#{message.sendDate}"
+                      converter="#{zonedDateTimeConverter.of(DATE_TIME_FORMAT)}"/>
+
+        <h:outputText rendered="#{message.softVersion ne null}"
+                      value="#{message.softVersion}"/>
+        <h:outputText rendered="#{message.softVersion == null}"
+                      value="—"/>
+
+        <h:outputText value="Тип сообщения:"/>
+
+        <h:outputText value="MessageKind:"/>
+
+        <h:outputText value="#{message.messageType}"/>
+
+        <h:outputText rendered="#{message.messageKind ne null}"
+                      value="#{message.messageKind}"/>
+
+        <h:outputText rendered="#{message.softVersion == null}" value="—"/>
+    </h:panelGrid>
+
+</ui:composition>

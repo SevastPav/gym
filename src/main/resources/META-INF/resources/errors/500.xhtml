@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<head>
+    <meta charset="utf-8"/>
+    <title>Внутренняя ошибка</title>
+    <link rel="shortcut icon" type="image/x-icon" href="#{resource['images:favicon.png']}"/>
+    <style>
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            font: normal 16px "Segoe UI", "Open Sans", sans-serif;
+            height: 100%;
+            background: #fff;
+            text-align: center;
+        }
+
+        .ep-wrap {
+            text-align: center;
+            padding-top: 12%;
+        }
+
+        .ep-holder {
+            display: inline-block;
+        }
+
+        .code {
+            position: relative;
+            font-size: 110px;
+            line-height: 110px;
+            font-weight: bold;
+            color: #672a51;
+        }
+
+        .code-label {
+            font-weight: bold;
+            color: #964679;
+            position: relative;
+            display: inline-block;
+            padding: 5px 0;
+        }
+
+        .code-label:after {
+            content: "";
+            display: block;
+            height: 1px;
+            width: 250px;
+            background: #d2d8e2;
+            position: absolute;
+            left: 50%;
+            margin-left: -125px;
+            bottom: -5px;
+        }
+
+        .code-descr {
+            font-size: 14px;
+            color: #343434;
+            padding: 10px;
+        }
+
+        .bb {
+            font-size: 13px;
+            display: inline-block;
+            color: #fff;
+            background: #11acac;
+            text-decoration: none;
+            padding: 4px 10px;
+        }
+
+        .bb:hover {
+            background: #0f8c8c;
+        }
+    </style>
+</head>
+<body>
+<div class="ep-wrap">
+    <div class="ep-holder">
+        <div class="code-label">Возникли трудности..</div>
+        <div class="code-descr">#{requestScope['javax.servlet.error.message']}</div>
+        <p:outputPanel id="exceptionPanel" style="width:500px;height:200px;border:1px;font-size:10px;">
+        <p:outputLabel value="Exception Type :: #{pfExceptionHandler.type}"></p:outputLabel>
+        <p:outputLabel value="Exception Message :: #{pfExceptionHandler.message}"></p:outputLabel>
+        <p:outputLabel value="Exception StackTrace :: #{pfExceptionHandler.formattedStackTrace}"></p:outputLabel>
+        </p:outputPanel>
+        <a href="#{request.contextPath}" class="bb">На главную</a>
+    </div>
+</div>
+
+</body>
+</html>

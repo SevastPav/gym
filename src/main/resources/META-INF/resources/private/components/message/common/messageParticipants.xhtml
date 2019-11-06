@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+>
+
+    <h:panelGrid columns="1" cellpadding="5">
+        <h:outputText value="ParticipantID:"/>
+
+        <h:outputText rendered="#{message.participantId ne null}"
+                      value="#{message.participantId}"/>
+        <h:outputText rendered="#{message.participantId == null}"
+                      value="—"/>
+
+        <h:outputText value="Отправитель:"/>
+        <h:outputText rendered="#{message.senderInformation ne null}" value="#{message.senderInformation}"/>
+        <h:outputText rendered="#{message.senderInformation == null}" value="—"/>
+
+        <h:outputText value="Код ТО отправителя:"/>
+        <h:outputText rendered="#{message.senderCustomCode ne null}" value="#{message.senderCustomCode}"/>
+        <h:outputText rendered="#{message.senderCustomCode == null}" value="—"/>
+
+        <h:outputText value="Получатель:"/>
+        <h:outputText rendered="#{message.receiverInformation ne null}" value="#{message.receiverInformation}"/>
+        <h:outputText rendered="#{message.receiverInformation == null}" value="—"/>
+
+        <h:outputText value="Код ТО получатения:"/>
+        <h:outputText rendered="#{message.rcvCustomCode ne null}" value="#{message.rcvCustomCode}"/>
+        <h:outputText rendered="#{message.rcvCustomCode == null}" value="—"/>
+    </h:panelGrid>
+</ui:composition>

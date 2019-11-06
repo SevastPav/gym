@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="shortcut icon" type="image/x-icon" href="#{resource['images:favicon.png']}"/>
+    <h:outputStylesheet name="/style.css" library="css"/>
+    <h:outputScript library="js" target="head" name="main.js" />
+    <title><ui:insert name="title">ЦУК</ui:insert></title>
+</h:head>
+
+<h:body>
+    <ui:composition>
+        <h:form id="login-main" prependId="false">
+            <p:dialog minWidth="500" id="login_form" header="Вход в сервис" widgetVar="dlg" resizable="false" visible="true" closable="false">
+                <div class="ui-message-error" style="display: ${param['error'] != null ? 'block' : 'none'}">
+                    <span class="ui-message-error-icon"/>
+                    <span class="ui-message-error-detail">Неправильный логин или пароль!</span>
+                </div>
+                <h:panelGrid columns="1" cellpadding="5">
+
+                    <p:outputLabel for="username" value="Пользователь"/>
+                    <p:inputText id="username" title="Username" required="true"/>
+
+                    <p:outputLabel for="username" value="Пароль"/>
+                    <p:password id="password" title="Password" required="true"/>
+
+                    <f:facet name="footer">
+                        <p:commandButton styleClass="login__submit-btn" value="ВОЙТИ" ajax="false" validateClient="true"/>
+                        <p:button styleClass="login__reset-btn" value="СБРОСИТЬ" />
+                    </f:facet>
+
+                </h:panelGrid>
+            </p:dialog>
+        </h:form>
+    </ui:composition>
+
+    <h:outputStylesheet name="/components.css" library="primefaces"/>
+    <h:outputStylesheet name="/style.css" library="css"/>
+    <h:outputStylesheet name="/login-form.css" library="css"/>
+</h:body>
+</html>

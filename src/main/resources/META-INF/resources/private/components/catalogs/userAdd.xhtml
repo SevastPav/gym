@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+
+    <p:dialog styleClass="modal-window"
+              header="${userAddBean.viewMode ? 'Просмотр информации' : userAddBean.edit ? 'Редактирование' : 'Добавление'} пользователя"
+              widgetVar="userAddDlg" modal="true" resizable="false" id="userAddDlg" draggable="false">
+        <p:tabView id="tabViewUserAdd" dynamic="false"
+                   activeIndex="#{userAddBean.selectedTabIndex}"
+                   tabChangeListener="#{userAddBean.onTabSelect}"
+                   widgetVar="tabViewUserAdd"
+                   update=":#{p:component('userTabContent')} :#{p:component('tabViewUserAdd')} :#{p:component('userForm')}">
+            <p:ajax event="tabChange"
+                    update=":#{p:component('userTabContent')} :#{p:component('tabViewUserAdd')} :#{p:component('userForm')}"
+                    listener="#{userAddBean.onTabSelect}"/>
+            <p:tab id="mainInfoTab" title="Личные данные"
+                   update=":#{p:component('userTabContent')} :#{p:component('tabViewUserAdd')} :#{p:component('userForm')}"/>
+            <p:tab id="dopInfo" title="Технические детали"
+                   update=":#{p:component('userTabContent')} :#{p:component('tabViewUserAdd')} :#{p:component('userForm')}"/>
+        </p:tabView>
+        <h:form id="userForm" resizable="false">
+        <p:panel id="userTabContent" styleClass="tab-content" widgetVar="userTabContent">
+            <h:panelGroup rendered="#{userAddBean.selectedTabIndex==0}">
+                    <div class="modal__add-custom__wrapper ${userAddBean.viewMode ? 'modal__view-entry' : ''}">
+                        <div class="modal-window__table">
+                            <div class="modal__add-custom__row-wrapper">
+                                <p:outputLabel class="modal__add-custom__row-label ${userAddBean.isErrorField(userAddBean.usernameFiled) ? 'modal__label-error' : ''}" for="username" value="Логин"/>
+                                <p:inputText disabled="${userAddBean.viewMode or userAddBean.selectedTabIndex != 0}"
+                                             class="modal__add-custom__row-input ${userAddBean.isErrorField(userAddBean.usernameFiled) ? 'modal__row-error' : ''}"
+                                             id="username" value="#{userAddBean.userEntity.username}">
+                                    <p:ajax event="blur" partialSubmit="true"/>
+                                </p:inputText>
+                            </div>
+                            <div class="modal__add-custom__row-wrapper">
+                                <p:outputLabel class="modal__add-custom__row-label ${userAddBean.isErrorField(userAddBean.fioFiled) ? 'modal__label-error' : ''}" for="fio"
+                                               value="Фамилия, имя, отчество"/>
+                                <p:inputText disabled="${userAddBean.viewMode}"
+                                             class="modal__add-custom__row-input ${userAddBean.isErrorField(userAddBean.fioFiled) ? 'modal__row-error' : ''}"
+                                             id="fio" value="#{userAddBean.userEntity.fio}">
+                                    <p:ajax event="blur" partialSubmit="true"/>
+                                </p:inputText>
+                            </div>
+                            <div class="modal__add-custom__row-wrapper">
+                                <p:outputLabel class="modal__add-custom__row-label" for="document_number"
+                                               value="Номер документа"/>
+                                <p:inputText disabled="${userAddBean.viewMode}" class="modal__add-custom__row-input"
+                                             id="document_number" value="#{userAddBean.userEntity.documentNumber}">
+                                    <p:ajax event="blur" partialSubmit="true"/>
+                                </p:inputText>
+                            </div>
+                            <div class="modal__add-custom__row-wrapper">
+                                <p:outputLabel class="modal__add-custom__row-label" for="department" value="Отдел"/>
+                                <p:inputText disabled="${userAddBean.viewMode}" class="modal__add-custom__row-input"
+                                             id="department" value="#{userAddBean.userEntity.department}">
+                                    <p:ajax event="blur" partialSubmit="true"/>
+                                </p:inputText>
+                            </div>
+                            <div class="modal__add-custom__row-wrapper">
+                                <p:outputLabel class="modal__add-custom__row-label" for="userPosition"
+                                               value="Должность"/>
+                                <p:inputText disabled="${userAddBean.viewMode}" class="modal__add-custom__row-input"
+                                             id="userPosition" value="#{userAddBean.userEntity.userPosition}">
+                                    <p:ajax event="blur" partialSubmit="true"/>
+                                </p:inputText>
+                            </div>
+                            <div class="modal__add-custom__row-wrapper">
+                                <p:outputLabel class="modal__add-custom__row-label" for="unit"
+                                               value="Структурное подразделение" converter="javax.faces.Integer"/>
+                                <p:selectOneMenu disabled="${userAddBean.viewMode}"
+                                                 styleClass="filters_form_select filters_form_select__full" id="unit"
+                                                 value="#{userAddBean.newUnitId}" dynamic="true">
+                                    <f:selectItems value="#{userAddBean.units}"
+                                                   var="unit" itemLabel="#{unit.code} - #{unit.title}"
+                                                   itemValue="#{unit.id}"/>
+                                    <p:ajax event="blur" partialSubmit="true"/>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="modal__add-custom__row-wrapper">
+                                <p:outputLabel class="modal__add-custom__row-label" for="role" value="Роль"/>
+                                <p:selectOneMenu disabled="${userAddBean.viewMode}"
+                                                 styleClass="filters_form_select filters_form_select__full" id="role"
+                                                 value="#{userAddBean.newRoleId}" dynamic="true">
+                                    <f:selectItems value="#{userAddBean.allowedToAddRoles}"
+                                                   var="role" itemLabel="#{role.description}"
+                                                   itemValue="#{role.authority}"/>
+                                    <p:ajax event="blur" partialSubmit="true"/>
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="modal__add-custom__row-wrapper">
+                                <p:outputLabel class="modal__add-custom__row-label" for="note" value="Примечание"/>
+                                <p:inputText disabled="${userAddBean.viewMode}" class="modal__add-custom__row-input"
+                                             id="note" value="#{userAddBean.userEntity.note}">
+                                    <p:ajax event="blur" partialSubmit="true"/>
+                                </p:inputText>
+                            </div>
+                            <c:if test="${not userAddBean.viewMode}">
+                                <div class="modal__add-custom__row-wrapper ${userAddBean.edit ? '' : 'modal__row-hidden'}">
+                                    <p:selectBooleanCheckbox styleClass="form__action-buttons__checkbox" id="changePassword"
+                                                             value="#{userAddBean.changePassword}"
+                                                             rendered="${userAddBean.edit}"
+                                                             update="newClientPassword newClientPasswordLabel generatePassword"
+                                                             itemLabel="Изменить пароль"
+                                    >
+                                        <f:ajax render="newClientPassword newClientPasswordLabel generatePassword"/>
+                                        <p:ajax event="blur" partialSubmit="true"/>
+                                        <p:ajax event="change" update="userTabContent"/>
+                                    </p:selectBooleanCheckbox>
+                                </div>
+                                <div class="modal__add-custom__row-wrapper modal-window__row__input-button ${userAddBean.viewMode ? 'modal__row-hidden' : ''}">
+                                    <div class="modal__add-custom__row-wrapper">
+                                        <p:outputLabel class="modal__add-custom__row-label ${userAddBean.isErrorField(userAddBean.passwordFiled) ? 'modal__label-error' : ''}"
+                                                       id="newClientPasswordLabel"
+                                                       for="newClientPassword" value="Пароль"/>
+                                        <p:inputText id="newClientPassword"
+                                                     class="modal__add-custom__row-input ${userAddBean.isErrorField(userAddBean.passwordFiled) ? 'modal__row-error' : ''}"
+                                                     value="#{userAddBean.password}"
+                                                     disabled="${userAddBean.edit and not userAddBean.changePassword or userAddBean.viewMode}">
+                                            <p:ajax event="blur" partialSubmit="true"/>
+                                            <p:ajax event="change" update="userTabContent"/>
+                                        </p:inputText>
+                                    </div>
+                                    <div class="modal__add-custom__row-wrapper modal-window__row__button">
+                                        <div class="filters__buttons-submit">
+                                            <p:commandButton id="generatePassword" value="Сгенерировать"
+                                                             disabled="${userAddBean.edit and not userAddBean.changePassword or userAddBean.viewMode}"
+                                                             action="#{userAddBean.generatePassword}"
+                                                             update="newClientPassword">
+                                            </p:commandButton>
+                                        </div>
+                                    </div>
+                                </div>
+                            </c:if>
+                            <div class="modal-window__action-buttons-wrapper">
+                                <c:if test="${not userAddBean.edit}">
+                                    <div class="filters__buttons-submit modal-window__confirm-button-wrapper button__navigation ${userAddBean.edit ? 'modal__row-hidden' : ''} ">
+                                        <p:commandButton value="ДАЛЕЕ"
+                                                         actionListener="#{userAddBean.next}"
+                                                         update=":#{p:component('userTabContent')} :#{p:component('tabViewUserAdd')} @form"/>
+                                    </div>
+                                </c:if>
+                                <c:if test="${userAddBean.edit}">
+                                    <p:messages id="messages" showDetail="false" autoUpdate="true" closable="true"/>
+                                    <div  class="filters__buttons-submit modal-window__confirm-button-wrapper">
+                                        <p:commandButton value="СОХРАНИТЬ"
+                                                         action="#{userAddBean.save}"
+                                                         update=":#{p:component('catalogUserFormTable')} @form"/>
+                                    </div>
+                                </c:if>
+                                <div class="modal-window__cancel-button-wrapper">
+                                    <p:commandButton value="НЕ СОХРАНЯТЬ"
+                                                     rendered="${userAddBean.edit}"
+                                                     action="#{userAddBean.setUserEntity(null)}"
+                                                     update="userAddDlg"
+                                                     resetValues="true"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </h:panelGroup>
+            <h:panelGroup rendered="#{userAddBean.selectedTabIndex==1}">
+                    <div class="modal__add-custom__wrapper ${userAddBean.viewMode ? 'modal__view-entry' : ''}">
+                        <div class="modal-window__table">
+                            <div class="modal__add-custom__row-wrapper">
+                                <p:outputLabel class="modal__add-custom__row-label" for="ipAddress" value="IP–адрес"/>
+                                <p:inputText disabled="${userAddBean.viewMode}" class="modal__add-custom__row-input"
+                                             id="ipAddress" value="#{userAddBean.userEntity.ipAddress}">
+                                    <p:ajax event="blur" partialSubmit="true"/>
+                                </p:inputText>
+                            </div>
+                            <div class="modal__add-custom__row-wrapper">
+                                <p:outputLabel class="modal__add-custom__row-label" for="macAddress" value="МАС–адрес"/>
+                                <p:inputText disabled="${userAddBean.viewMode}" class="modal__add-custom__row-input"
+                                             id="macAddress" value="#{userAddBean.userEntity.macAddress}">
+                                    <p:ajax event="blur" partialSubmit="true"/>
+                                </p:inputText>
+                            </div>
+                            <div class="modal__add-custom__row-wrapper">
+                                <p:outputLabel class="modal__add-custom__row-label" for="domainName"
+                                               value="Доменное имя"/>
+                                <p:inputText disabled="${userAddBean.viewMode}" class="modal__add-custom__row-input"
+                                             id="domainName" value="#{userAddBean.userEntity.domainName}">
+                                    <p:ajax event="blur" partialSubmit="true"/>
+                                </p:inputText>
+                            </div>
+                            <div class="modal-window__action-buttons-wrapper">
+                                <p:messages id="messages1" showDetail="false" autoUpdate="true" closable="true"/>
+                                <div class="filters__buttons-submit modal-window__confirm-button-wrapper">
+                                    <p:commandButton value="СОХРАНИТЬ"
+                                                     action="#{userAddBean.save}"
+                                                     update=":#{p:component('catalogUserFormTable')} @form"
+                                                     resetValues="true"/>
+                                </div>
+                                <div class="modal-window__cancel-button-wrapper">
+                                    <p:commandButton value="НЕ СОХРАНЯТЬ"
+                                                     rendered="${userAddBean.edit}"
+                                                     action="#{userAddBean.setUserEntity(null)}"
+                                                     update="userAddDlg"
+                                                     resetValues="true"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </h:panelGroup>
+        </p:panel>
+        </h:form>
+
+        <p:ajax event="close" update="userAddDlg"/>
+    </p:dialog>
+</ui:composition>

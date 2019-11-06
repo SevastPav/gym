@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+>
+    <p:dialog styleClass="modal-window" header="Ошибка при запросе из архива" widgetVar="requestErrorDlg" modal="true" resizable="false"
+              dynamic="true"
+              id="requestErrorDlg" draggable="false" position="center" onShow="PF('requestErrorDlg').initPosition()" focus="archivedErrors">
+        <h:form id="archivedErrors">
+            <p:panel id="requestArchivedTabContent" styleClass="tab-content">
+                <h:panelGroup>
+                    <div class="modal__add-custom__wrapper">
+                        <div class="modal-window__table">
+                            <div class="modal__add-custom__row-wrapper" style="display: block !important;">
+                                <p:outputLabel
+                                    value="Истекло время ожидания завершения операции. Возможно распаковка архива в оперативную БД все ещё продолжается и для её завершения требуется больше времени. Повторите запрос поиска процедур в оперативной БД позже"
+                                    rendered="#{proceduresNewBean.archivingRequestTimeExceeded}"/>
+                                <p:outputLabel value="Получение следующих процедур завершилось ошибкой:"
+                                               rendered="#{not empty proceduresNewBean.archivingErrors}"/>
+                            </div>
+                            <div class="modal__add-custom__row-wrapper" style="display: block !important;">
+                                <ui:repeat value="#{proceduresNewBean.archivingErrors}" var="processId">
+                                    <p:outputLabel value="#{processId}"/>
+                                </ui:repeat>
+                            </div>
+                        </div>
+                    </div>
+                </h:panelGroup>
+            </p:panel>
+        </h:form>
+    </p:dialog>
+</ui:composition>
+

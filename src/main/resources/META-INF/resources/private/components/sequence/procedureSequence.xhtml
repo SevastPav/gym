@@ -1,0 +1,261 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                template="../../templates/serviceLayout.xhtml">
+    <ui:define name="header">
+        <f:metadata>
+            <f:event type="preRenderView"
+                     listener="#{messageSequenceBean.fromMessageAndProcProc(param['processId'], param['messageId'])}"/>
+        </f:metadata>
+
+    </ui:define>
+
+    <ui:define name="content">
+        <script type="application/javascript">
+            function resizeSouth() {
+                var southUnit = PF('sequenceWidget').layout.south; // or "left", "top", "bottom"
+                //southUnit.set("height", 1000); //Change the width to 1000px
+                southUnit.resize();
+            }
+        </script>
+        <div class="sequence__main-wrapper">
+            <!--<p:layout style="min-width:400px;min-height:200px;" fullPage="true" resizeTitle="11" closeTitle="222"
+                      expandTitle="333" collapseTitle="444" widgetVar="sequenceWidget">
+                <p:layoutUnit position="center">-->
+            <div>
+                <h:form>
+                    <div class="sequence_main-wrapper">
+                        <div class="expert__main-header__wrapper">
+                            <p:panel>
+                                Схема взаимодействия
+<!--                                <p:tooltip for="@parent">
+                                    <ui:insert name="procedureTooltip">
+                                        <ui:include src="../tooltips/procedureTooltip.xhtml">
+                                            <ui:param name="procedure" value="#{messageSequenceBean.procedure}"/>
+                                        </ui:include>
+                                    </ui:insert>
+                                </p:tooltip>-->
+                            </p:panel>
+                            <p:panel>
+                                <h:outputText value="Идентификатор процедуры: #{messageSequenceBean.procedure.processId}"/>
+                            </p:panel>
+                            <h:panelGrid styleClass="sequence__service-messages" columns="2" cellpadding="5">
+                                <h:outputText value="Показать служебные сообщения "/>
+                                <p:toggleSwitch value="#{messageSequenceBean.showServiceMessages}">
+                                    <p:ajax listener="#{messageSequenceBean.changeShowServiceMessages}" update="@form"/>
+                                </p:toggleSwitch>
+                            </h:panelGrid>
+                        </div>
+
+                        <p:remoteCommand name="addMessageTabCommand" actionListener="#{messageInfosBean.addMessageTab}"
+                                         update="#{p:component('messageInfoLayout')}"
+                                         onstart="PF('statusDialog').show()" oncomplete="PF('statusDialog').hide()"/>
+                        <p:remoteCommand name="selectMessage" actionListener="#{messageSequenceBean.selectMessage}"
+                                         update="@form"/>
+
+
+                        <div class="sequence__table-tooltip_wrapper">
+                            <div class="sequence__main-tooltip-wrapper">
+                                <p:panel id="messageInfoPanel" styleClass="sequence__main-tooltip">
+                                    <h4>#{messageSequenceBean.selected.messageType}</h4>
+                                    <ui:insert name = "messageInfoTooltip" >
+                                        <ui:include src = "../tooltips/messageInfoTooltip.xhtml" >
+                                            <ui:param name = "message" value = "#{messageSequenceBean.selected}" />
+                                        </ui:include>
+                                    </ui:insert>
+                                </p:panel>
+                            </div>
+
+                            <table class="sequence__table">
+                                <tr>
+                                    <ui:repeat value="#{messageSequenceBean.participants}" var="participant">
+                                        <th><p:panel>#{participant.name}
+                                            <p:tooltip for="@parent">
+                                                <ui:insert name="participantTooltip">
+                                                    <ui:include src="../tooltips/participantTooltip.xhtml">
+                                                        <ui:param name="participant" value="#{participant}"/>
+                                                    </ui:include>
+                                                </ui:insert>
+                                            </p:tooltip>
+                                        </p:panel></th>
+                                    </ui:repeat>
+                                    <th>АПС "ЭПС"</th>
+                                    <ui:repeat value="#{messageSequenceBean.customs}" var="custom">
+                                        <th><p:panel>#{custom.value}
+                                            <p:tooltip for="@parent"
+                                                       rendered="#{messageSequenceBean.existsCustomsInfo(custom.value)}">
+                                                <ui:insert name="customsTooltip">
+                                                    <ui:include src="../tooltips/customsTooltip.xhtml">
+                                                        <ui:param name="customs"
+                                                                  value="#{messageSequenceBean.findCustomsById(custom.value)}"/>
+                                                    </ui:include>
+                                                </ui:insert>
+                                            </p:tooltip>
+                                        </p:panel></th>
+                                    </ui:repeat>
+                                </tr>
+                                <ui:repeat value="#{messageSequenceBean.messages}" var="message">
+                                    <tr class="#{messageSequenceBean.isBadProcessed(message)==true?'bad-processed':'good-processed'} #{(messageSequenceBean.selected != null and messageSequenceBean.compareWithSelected(message))?'message-selected':'not-selected'} #{messageSequenceBean.isMessageReferenceSelected(message)?'referenced-selected':''} #{messageSequenceBean.isMessageReferencedBySelected(message)?'referenced-by-selected':''}">
+                                        <ui:repeat value="#{messageSequenceBean.participants}" var="participant"
+                                                  varStatus="participantStatus">
+                                            <td>
+                                                <p:panel
+                                                    rendered="#{messageSequenceBean.isParticipantReceiver(message, participant)}">
+                                                    <div
+                                                        class="sequence__table__participant_receiver sequence__table-message">
+                                                        <!--&lt;- -->
+                                                    </div>
+
+                                                    <ui:include src="contextMenu.xhtml">
+                                                        <ui:param name="message" value="#{message}"/>
+                                                    </ui:include>
+                                                </p:panel>
+                                                <p:panel
+                                                    rendered="#{messageSequenceBean.isParticipantSender(message, participant)}">
+                                                    <div class="sequence__table__participant_sender sequence__table-message">
+                                                        <!--&gt;- -->
+                                                    </div>
+                                                    <ui:include src="contextMenu.xhtml">
+                                                        <ui:param name="message" value="#{message}"/>
+                                                    </ui:include>
+                                                </p:panel>
+                                                <p:panel
+                                                    rendered="#{messageSequenceBean.isNotThisParticipant(message, participant, participantStatus.index) and messageSequenceBean.isArrowMiddleParticipant(message, participantStatus.index)}">
+                                                    <div class="sequence__table__participant_next sequence__table-message">
+                                                        <!--&#45;&#45;&#45;&#45;&#45;&#45;-->
+                                                    </div>
+                                                    <ui:include src="contextMenu.xhtml">
+                                                        <ui:param name="message" value="#{message}"/>
+                                                    </ui:include>
+                                                </p:panel>
+                                            </td>
+                                        </ui:repeat>
+
+                                        <td>
+                                            <p:panel
+                                                class="#{(messageSequenceBean.isEpsSender(message) and messageSequenceBean.isCustomsReceiver(message) ) or (messageSequenceBean.isEpsReceiver(message) and messageSequenceBean.isCustomsSender(message)) ? 'sequence__table__message_title__right' : 'sequence__table__message_title__left'} sequence__table__message_title">
+                                                <div class="sequence__table__message_title-clickable">
+                                                    <!--<p:panel class="sequence__table__message_title-icon">
+                                                        <i class="fa fa-fw fa-question-circle"></i>
+                                                        <p:tooltip for="@parent">
+                                                            <ui:insert name = "messageInfoTooltip" >
+                                                                <ui:include src = "../tooltips/messageInfoTooltip.xhtml" >
+                                                                    <ui:param name = "message" value = "#{message}" />
+                                                                </ui:include>
+                                                            </ui:insert>
+                                                        </p:tooltip>
+                                                    </p:panel>-->
+                                                    <p:panel>
+                                                        <div class="sequence__table__message_title-text #{(messageSequenceBean.selected != null and messageSequenceBean.compareWithSelected(message))?'message-selected':'not-selected'}"
+                                                             onclick="selectMessage([{name:'selectedMessage', value: '#{message.envelopeId}'}])"
+                                                             ondblclick="PF('statusDialog').show();addMessageTabCommand([{name:'envelopeId', value: '#{message.envelopeId}'}]);">
+                                                            #{message.messageType}
+                                                        </div>
+                                                        <p:contextMenu for="@parent">
+                                                            <p:menuitem styleClass="infoTable__watch-message" value="Просмотр сообщения"
+                                                                        outcome="/private/components/message/messageView.xhtml?envelopeId=#{message.envelopeId}"
+                                                                        target="_blank"/>
+                                                        </p:contextMenu>
+                                                    </p:panel>
+                                                </div>
+                                            </p:panel>
+                                            <p:panel rendered="#{messageSequenceBean.isEpsReceiver(message)}">
+                                                <p:panel rendered="#{messageSequenceBean.isCustomsSender(message)}">
+                                                    <div class="sequence__table__customs_receiver sequence__table-message">
+                                                        <!--&lt;- -->
+                                                    </div>
+                                                    <!--<ui:include src="contextMenu.xhtml">
+                                                        <ui:param name="message" value="#{message}"/>
+                                                    </ui:include>-->
+                                                </p:panel>
+                                                <p:panel rendered="#{!messageSequenceBean.isCustomsSender(message)}">
+                                                    <div class="sequence__table__not_customs_sender sequence__table-message">
+                                                        <!-- -&gt;-->
+                                                    </div>
+                                                    <!--<ui:include src="contextMenu.xhtml">
+                                                        <ui:param name="message" value="#{message}"/>
+                                                    </ui:include>-->
+                                                </p:panel>
+                                            </p:panel>
+                                            <p:panel rendered="#{messageSequenceBean.isEpsSender(message)}">
+                                                <p:panel rendered="#{messageSequenceBean.isCustomsReceiver(message)}">
+                                                    <div class="sequence__table___customs_receiver sequence__table-message">
+                                                        <!--&gt;- -->
+                                                    </div>
+                                                    <!--<ui:include src="contextMenu.xhtml">
+                                                        <ui:param name="message" value="#{message}"/>
+                                                    </ui:include>-->
+                                                </p:panel>
+                                                <p:panel rendered="#{!messageSequenceBean.isCustomsReceiver(message)}">
+                                                    <div
+                                                        class="sequence__table___not_customs_receiver sequence__table-message">
+                                                        <!-- -&lt;-->
+                                                    </div>
+                                                    <!--<ui:include src="contextMenu.xhtml">
+                                                        <ui:param name="message" value="#{message}"/>
+                                                    </ui:include>-->
+                                                </p:panel>
+                                            </p:panel>
+                                        </td>
+                                        <ui:repeat value="#{messageSequenceBean.customs}" var="custom"
+                                                  varStatus="customsStatus">
+                                            <td>
+                                                <p:panel rendered="#{messageSequenceBean.isCustomsSender(message, custom)}">
+                                                    <div class="sequence__table__customs_sender sequence__table-message">
+                                                        <!-- -&lt;-->
+                                                    </div>
+                                                    <!--<ui:include src="contextMenu.xhtml">
+                                                        <ui:param name="message" value="#{message}"/>
+                                                    </ui:include>-->
+                                                </p:panel>
+                                                <p:panel
+                                                    rendered="#{messageSequenceBean.isCustomsReceiver(message, custom)}">
+                                                    <div
+                                                        class="sequence__table__customs_receiver-left sequence__table-message">
+                                                        <!-- -&gt;-->
+                                                    </div>
+                                                    <!--<ui:include src="contextMenu.xhtml">
+                                                        <ui:param name="message" value="#{message}"/>
+                                                    </ui:include>-->
+                                                </p:panel>
+                                                <p:panel
+                                                    rendered="#{messageSequenceBean.isNotThisCustoms(message, custom, customsStatus.index) and messageSequenceBean.isArrowMiddleCustoms(message, customsStatus.index)}">
+                                                    <div class="sequence__table__customs_next sequence__table-message">
+                                                        <!-- &#45;&#45;&#45;&#45;&#45;&#45;-->
+                                                    </div>
+                                                    <!--<ui:include src="contextMenu.xhtml">
+                                                        <ui:param name="message" value="#{message}"/>
+                                                    </ui:include>-->
+                                                </p:panel>
+                                            </td>
+                                        </ui:repeat>
+                                    </tr>
+                                </ui:repeat>
+                            </table>
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+            <h:form id="messageInfoLayout">
+                <p:panel id="toggleable" header="Информация по сообщению" toggleable="true" toggleSpeed="500" rendered="#{messageInfosBean.selectedTabIndex ne null}"
+                         closeSpeed="500" widgetVar="panel">
+                    <h:panelGroup rendered="#{messageInfosBean.selectedTabIndex ne null}">
+                        <ui:include src="messagesBottomInfo.xhtml"/>
+                    </h:panelGroup>
+                </p:panel>
+            </h:form>
+            <!--
+                            <p:layoutUnit styleClass="sequence__messageInfo_table" position="south" resizable="true" size="100"
+                                          minSize="40" collapsible="true">
+                                <h:form id="messageInfoLayout">
+                                    <h:panelGroup rendered="#{messageInfoesBean.selectedTabIndex ne null}">
+                                        <ui:include src="messagesBottomInfo.xhtml"/>
+                                    </h:panelGroup>
+                                </h:form>
+                            </p:layoutUnit>
+                        </p:layout>-->
+        </div>
+    </ui:define>
+</ui:composition>

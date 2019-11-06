@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+>
+
+    <h:panelGrid columns="1" cellpadding="5">
+        <h:outputText value="DocumentID:"/>
+
+        <h:outputText value="#{message.documentId}"/>
+
+        <h:outputText value="RefDocumentID:"/>
+        <h:outputText value="#{messageInfosBean.getRefDocId(message)}"/>
+
+        <h:outputText value="RefMainDocument:"/>
+        <h:outputText value="#{messageInfosBean.getRefMainDoc(message)}"/>
+
+        <h:outputText value="Статус:"/>
+        <h:outputText value="#{messageInfosBean.getDocStatus(message)}"/>
+
+    </h:panelGrid>
+
+</ui:composition>

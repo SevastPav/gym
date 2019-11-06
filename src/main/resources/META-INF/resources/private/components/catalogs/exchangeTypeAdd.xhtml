@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+
+    <p:dialog styleClass="modal-window"
+              header="#{exchangeTypeCatalogBean.header}"
+              widgetVar="exchangeTypeAddDlg" modal="true" resizable="false" id="exchangeTypeAddDlg">
+        <div class="modal__add-custom__wrapper">
+            <div class="modal-window__table">
+                <div class="producer__details-table__wrapper">
+                    <h:outputLabel class="modal__add-custom__row-label" for="code" value="Код обмена"/>
+                    <p:inputText class="modal__add-custom__row-input" id="code" value="#{exchangeTypeCatalogBean.exchangeTypeDto.code}"/>
+                </div>
+                <div class="producer__details-table__wrapper">
+                    <h:outputLabel class="modal__add-custom__row-label" for="desc" value="Описание обмена"/>
+                    <p:inputText class="modal__add-custom__row-input" id="desc" value="#{exchangeTypeCatalogBean.exchangeTypeDto.desc}"/>
+                </div>
+
+                <div class="modal-window__action-buttons-wrapper">
+                    <div class="filters__buttons-submit modal-window__confirm-button-wrapper">
+                        <p:commandButton value="СОХРАНИТЬ" action="#{exchangeTypeCatalogBean.addAction}"
+                                         update=":#{p:component('catalogExchangeTypeFormTable')}"
+                                         oncomplete="PF('exchangeTypeAddDlg').hide()"/>
+                    </div>
+                    <div class="modal-window__cancel-button-wrapper">
+                        <p:commandButton value="НЕ СОХРАНЯТЬ" actionListener="#{exchangeTypeCatalogBean.closeAction}"
+                                         oncomplete="PF('exchangeTypeAddDlg').hide()"/>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <p:ajax event="close" update="exchangeTypeAddDlg"/>
+    </p:dialog>
+
+</ui:composition>
+
+<!-- Прошлые странные условия для рендера кнопок -->
+<!--
+<p:panel rendered="#{not exchangeTypeCatalogBean.edit}">
+<div class="filters__buttons-submit">
+    <p:commandButton value="СОХРАНИТЬ" action="#{exchangeTypeCatalogBean.addAction}"/>
+</div>
+</p:panel>
+<p:panel rendered="#{exchangeTypeCatalogBean.edit}">
+<div class="modal-window__cancel-button-wrapper">
+    <p:commandButton value="НЕ СОХРАНЯТЬ" action="#{exchangeTypeCatalogBean.editAction}"/>
+</div>
+</p:panel>-->

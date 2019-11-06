@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="shortcut icon" type="image/x-icon" href="#{resource['images:favicon.png']}"/>
+    <h:outputStylesheet name="/style.css" library="css"/>
+    <h:outputStylesheet name="/simpleXML.css" library="css"/>
+    <h:outputScript library="js" name="/simpleXML.js"/>
+    <title><ui:insert name="title">Просмотр</ui:insert></title>
+</h:head>
+
+<h:body>
+    <ui:param name="DATE_TIME_FORMAT" value="dd.MM.yyyy HH:mm:ss"/>
+    <ui:param name="DATE_TIME_FORMAT_WITHOUT_SECONDS" value="dd.MM.yyyy HH:mm"/>
+    <ui:param name="DATE_FORMAT" value="dd.MM.yyyy"/>
+    <ui:param name="GTD_ID_DATE_FORMAT" value="ddMMyy"/>
+    <ui:debug hotkey="x"/>
+    <h:form>
+        <p:ajaxExceptionHandler update="exceptionDialog"
+                                onexception="PF('exceptionDialog').show();"/>
+        <p:outputPanel
+            rendered="#{pfExceptionHandler.message!=null}">Ошибка: #{pfExceptionHandler.message}</p:outputPanel>
+        <p:dialog id="exceptionDialog" header="Ошибка!" widgetVar="exceptionDialog"
+                  height="500px" width="800px">
+            Сообщение: #{pfExceptionHandler.message} <br/>
+            StackTrace: <h:outputText value="#{pfExceptionHandler.formattedStackTrace}" escape="false"/> <br/>
+
+            <p:button onclick="document.location.href = document.location.href;"
+                      value="Reload!"
+                      rendered="#{pfExceptionHandler.type == 'javax.faces.application.ViewExpiredException'}"/>
+        </p:dialog>
+    </h:form>
+    <p:dialog id="modal-window_loader" widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false"
+              showHeader="false">
+        <div id="loader">
+            <div class="lds-ring-big">
+                <div class="lds-ring-big_child"></div>
+                <div class="lds-ring-big_child"></div>
+                <div class="lds-ring-big_child"></div>
+                <div class="lds-ring-big_child"></div>
+                <div class="lds-ring">
+                    <div class="lds-ring_child"></div>
+                    <div class="lds-ring_child"></div>
+                    <div class="lds-ring_child"></div>
+                    <div class="lds-ring_child"></div>
+                </div>
+            </div>
+            <div class="loader_description">
+                <span class="loader_description_text-row">Обновляем данные.</span>
+                <span class="loader_description_text-row">Пожалуйста, подождите...</span>
+            </div>
+        </div>
+    </p:dialog>
+
+    <p:growl id="growl" showDetail="true" life="5000" autoUpdate="true"/>
+    <div id="header">
+        <h:panelGroup>
+            <ui:insert name="header">Header</ui:insert>
+        </h:panelGroup>
+    </div>
+    <div id="content">
+        <h:panelGroup>
+            <ui:insert name="content">Content</ui:insert>
+        </h:panelGroup>
+    </div>
+
+</h:body>
+
+</html>

@@ -1,0 +1,113 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                template="../../templates/MessageViewLayout.xhtml">
+    <ui:define name="header">
+        <c:if test="!empty #{param['envelopeId']}">
+            <f:metadata>
+                <f:event type="preRenderView" listener="#{messageViewBean.fromEnvelope(param['envelopeId'], param['tab'], param['documentId'])}"/>
+            </f:metadata>
+        </c:if>
+    </ui:define>
+
+    <ui:define name="content">
+        <p:layout styleClass="message-info-view__bound-messages" style="min-width:400px;min-height:200px;" fullPage="true">
+
+            <p:layoutUnit styleClass="message-info-view__main-view" position="center">
+                <p:panel rendered="#{messageViewBean.selectedNode ne null}">
+                    <h:form id="messageInfoView">
+                        <p:remoteCommand name="updateMessageInfoView" update="@form"/>
+                        <div class="message-info-view__title">Envelope: #{messageViewBean.envelopeId}</div>
+                        <p:tabView activeIndex="#{messageViewBean.activeTabIndex}" tabChangeListener="#{messageViewBean.onTabSelect}">
+                            <p:ajax event="tabChange" listener="#{messageViewBean.onTabSelect}"/>
+                            <p:tab title="Документ">
+                                <div class="message-info__content-wrapper">
+                                    <div class="message-info__documents-tree-wrapper">
+                                        <p:outputPanel autoUpdate="true">
+                                            <p:tree value="#{messageViewBean.root}" var="node" selectionMode="single"
+                                                    selection="#{messageViewBean.selectedNode}">
+                                                <p:ajax event="select" update="#{p:component('messageInfoView')}"
+                                                        listener="#{messageViewBean.onNodeSelect}" oncomplete="createXmlView();PF('statusDialog').hide();"  onstart="PF('statusDialog').show()"/>
+                                                <p:treeNode styleClass="documents_tree">
+                                                    <h:panelGrid styleClass="text_align">
+                                                        <h:outputText value="#{node.label}"/>
+                                                        <h:outputText value="#{node.documentId}"/>
+                                                    </h:panelGrid>
+                                                </p:treeNode>
+                                            </p:tree>
+                                            <script language="javascript">
+                                                function createXmlView() {
+                                                    var xml = "#{messageViewBean.selectedNode.data.getDocumentEscaped()}";
+                                                    try {
+                                                        $("#simpleUseCase").empty().simpleXML({xmlString: xml});
+                                                    } catch (e) {
+                                                        $("#simpleUseCase").empty().append("Exception caught running plugin : " + ex);
+                                                        alert(e);
+                                                    }
+
+                                                    $("#dynamicXML-process").click(function () {
+                                                        try {
+                                                            $("#dynamicXML-output").empty();
+                                                            var xml = $("#dynamicXML").val();
+                                                            $("#dynamicXML-output").simpleXML({xmlString: xml});
+
+                                                        } catch (ex) {
+                                                            alert("Unable to process XML: " + ex);
+                                                        }
+                                                    });
+                                                }
+
+                                                $(document).ready(function () {
+                                                    createXmlView();
+                                                });
+                                            </script>
+                                        </p:outputPanel>
+                                    </div>
+                                    <div class="message-info__right-content-wrapper">
+                                        <div id="simpleUseCase"></div>
+                                    </div>
+                                </div>
+                            </p:tab>
+                            <p:tab title="Сертификат" disabled="#{messageViewBean.isNoCertificate()}">
+                                <div class="message-info__content-wrapper">
+                                    <div class="message-info__documents-tree-wrapper">
+                                        <p:tree value="#{messageViewBean.root}" var="node" selectionMode="single"
+                                                selection="#{messageViewBean.selectedNode}">
+                                            <p:ajax event="select" update="#{p:component('messageInfoView')}"
+                                                    listener="#{messageViewBean.onNodeSelect}" oncomplete="createXmlView();PF('statusDialog').hide();"  onstart="PF('statusDialog').show()"/>
+                                            <p:treeNode styleClass="documents_tree">
+                                                <h:panelGrid styleClass="text_align">
+                                                    <h:outputText value="#{node.label}"/>
+                                                    <h:outputText value="#{node.documentId}"/>
+                                                </h:panelGrid>
+                                            </p:treeNode>
+                                        </p:tree>
+                                    </div>
+                                    <div class="message-info__right-content-wrapper">
+                                        <ui:include src="certificateInfo.xhtml">
+                                            <ui:param name="certificate" value="#{messageViewBean.selectedNode.data.getCertificateInfoObject()}"/>
+                                        </ui:include>
+                                    </div>
+                                </div>
+                            </p:tab>
+                            <p:tab title="Форма документа" disabled="#{messageViewBean.isNoBeautifulView()}">
+                                <div class="message-info__content-wrapper">
+                                    <h:outputText value="#{messageViewBean.selectedNode.data.beautifulViewFormString}" escape="false"/>
+                                </div>
+                            </p:tab>
+                        </p:tabView>
+                    </h:form>
+                </p:panel>
+            </p:layoutUnit>
+            <!--<p:layoutUnit styleClass="message-info-view__message-info" position="south" resizable="true" size="200" maxSize="200" collapsible="true">
+                <h:form>
+                    <ui:include src = "messageFormInfo.xhtml" >
+                        <ui:param name = "message" value = "#{messageViewBean.currentMessage}" />
+                    </ui:include>
+                </h:form>
+            </p:layoutUnit>-->
+        </p:layout>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+>
+    <p:dialog styleClass="modal-window" header="Запрос из архива" widgetVar="requestArchivedDlg" modal="true" resizable="false"
+              id="requestArchivedDlg" draggable="false" position="center" onShow="PF('requestArchivedDlg').initPosition()" focus="requestArchivedForm">
+        <h:form id="requestArchivedForm">
+            <p:panel id="requestArchivedTabContent" styleClass="tab-content">
+                <h:panelGroup>
+                    <div class="modal__add-custom__wrapper">
+                        <div class="modal-window__table">
+                            <div class="modal__add-custom__row-wrapper">
+                                <p:selectBooleanCheckbox value="#{proceduresNewBean.withSubProc}" itemLabel="Запросить связные процедуры"/>
+                            </div>
+                            <div class="modal__add-custom__row-wrapper">
+                                <p:outputLabel for="repeatedArchivingDate" value="Дата повторной архивации процедуры" id="repeatedArchivingDateLabel"/>
+                                <p:calendar id="repeatedArchivingDate"
+                                            locale="ru"
+                                            autocomplete="off"
+                                            pattern="dd.MM.yyy"
+                                            timeZone="#{utilsBean.timeZone}"
+                                            style="padding-left: 10px;"
+                                            value="#{proceduresNewBean.repeatedArchivingDate}" />
+                            </div>
+                            <p:messages id="messages" showDetail="false" autoUpdate="true" closable="true"/>
+                            <div class="filters__buttons-submit modal-window__confirm-button-wrapper">
+                                <p:commandButton value="Запросить"
+                                                 id="requestArchivedButton"
+                                                 update="@form"
+                                                 onstart="PF('requestArchivedDlg').hide();PF('statusDialog').show()"
+                                                 action="#{proceduresNewBean.requestArchived}"/>
+                            </div>
+                        </div>
+                    </div>
+                </h:panelGroup>
+            </p:panel>
+        </h:form>
+        <p:ajax event="open" listener="#{proceduresNewBean.loaderOpenEvent}"/>
+        <p:ajax event="close" listener="#{proceduresNewBean.loaderCloseEvent}"/>
+    </p:dialog>
+</ui:composition>
+

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:sec="http://www.springframework.org/security/tags">
+    <ui:param name="DATE_TIME_FORMAT" value="dd.MM.yyyy HH:mm:ss"/>
+
+    <p:panel>
+        <ui:include src="../components/catalogs/universalFilter.xhtml">
+            <ui:param name="filtersObject" value="#{customsCatalogBean.filtersObject}"/>
+        </ui:include>
+    </p:panel>
+
+    <h:form styleClass="form__action-buttons" id="tableMenuFormCatalogCustoms">
+        <div class="form__action-buttons-wrapper">
+
+            <sec:authorize access="hasAnyRole('ADMIN', 'ROOT')">
+                <p:menubar styleClass="table-menu__main">
+                    <p:menuitem styleClass="form__action-buttons__add-new" value="ДОБАВИТЬ УЧЕТНУЮ ЗАПИСЬ ТО"
+                                oncomplete="PF('customsAddDlg').show();"
+                                action="#{customsCatalogBean.addEntityAction}"
+                                update=":#{p:component('customsAddDlg')} :#{p:component('customsAddForm')}"/>
+                </p:menubar>
+            </sec:authorize>
+
+            <ui:include src="customsDetails.xhtml" />
+            <p:remoteCommand name="updateCustomsActionsForm" update="@form"/>
+            <p:menubar styleClass="table-menu__main">
+                <p:menuitem value="ПОКАЗАТЬ ПОЛНУЮ ИНФОРМАЦИЮ" disabled="#{empty customsCatalogBean.selected}"
+                            oncomplete="PF('customsDetailsDlg').show();" update=":#{p:component('customsDetailsDlg')}"/>
+            </p:menubar>
+        </div>
+    </h:form>
+
+    <h:form id="catalogCustomsFormTable">
+        <div class="dataTable-wrapper">
+            <p:dataTable styleClass="producers__data-table" widgetVar="customsDataTable" var="entity"
+                         value="#{customsCatalogBean.lazyModel}"
+                         paginator="true"
+                         rows="15"
+                         cellspacing="0"
+                         resizableColumns="true"
+                         draggableColumns="true"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink} Количество строк {RowsPerPageDropdown} "
+                         currentPageReportTemplate="{currentPage} из {totalPages}"
+                         rowsPerPageTemplate="15,20,25"
+                         id="customsDataTable" lazy="true"
+                         paginatorPosition="bottom" disabledTextSelection="false" emptyMessage="Нет данных"
+                         selectionMode="single"
+                         tableStyleClass="table__action-buttons-last-cell"
+                         rowKey="#{entity.customsId}"
+                         selection="#{customsCatalogBean.selected}" scrollable="true" scrollWidth="100%">
+                <p:ajax event="rowSelect" listener="#{customsCatalogBean.onRowSelect}"
+                        update=":#{p:component('tableMenuFormCatalogCustoms')}"/>
+                <p:ajax event="page"
+                        onstart="PF('statusDialog').show()" oncomplete="updateCustomsActionsForm();PF('statusDialog').hide();"/>
+                <p:ajax event="sort"
+                        onstart="PF('statusDialog').show()" oncomplete="updateCustomsActionsForm();PF('statusDialog').hide();"/>
+                <p:ajax event="rowReorder" listener="#{customsCatalogBean.onRowReorder}"/>
+                <p:column headerText="Код ТО учетной записи" style="width: 250px"
+                          visible="#{customsCatalogBean.isViewedColumn('customCode')}">
+                    <h:outputText value="#{entity.customCode}"/>
+                </p:column>
+                <p:column headerText="Наименование учетной записи" style="width: 160px"
+                          visible="#{customsCatalogBean.isViewedColumn('name')}">
+                    <h:outputText value="#{entity.name}"/>
+                </p:column>
+                <p:column headerText="Транспортная информация" visible="#{customsCatalogBean.isViewedColumn('transportAddress')}"
+                          style="width: 160px">
+                    <h:outputText value="#{entity.transportAddress}/"/>
+                </p:column>
+                <p:column headerText="Вид информационного обмена" visible="#{customsCatalogBean.isViewedColumn('exchangeType')}"
+                          style="width: 160px">
+                    <h:outputText value="#{customsCatalogBean.normalyExcTypeName(entity.customsId.customExchange)}/"/>
+                </p:column>
+                <p:column headerText="WMQ-адрес" visible="#{customsCatalogBean.isViewedColumn('wmqAddress')}"
+                          style="width: 100px">
+                    <h:outputText value="#{entity.wmqAddress}"/>
+                </p:column>
+                <p:column headerText="Дата начала действия" visible="#{customsCatalogBean.isViewedColumn('startDate')}"
+                          sortBy="#{entity.startDate}" style="width: 180px">
+                    <h:outputText value="#{entity.startDate}" converter="javax.faces.DateTime">
+                        <f:convertDateTime type="date" pattern="dd.MM.yyyy" timeZone="#{utilsBean.timeZone}"/>
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="Дата окончания" visible="#{customsCatalogBean.isViewedColumn('endDate')}"
+                          sortBy="#{entity.endDate}"
+                          style="width: 160px">
+                    <h:outputText value="#{entity.endDate}" converter="javax.faces.DateTime">
+                        <f:convertDateTime type="date" pattern="dd.MM.yyyy" timeZone="#{utilsBean.timeZone}"/>
+                    </h:outputText>
+                </p:column>
+                <p:column resizable="false" style="width: 30px !important;">
+                    <sec:authorize access="hasAnyRole('ADMIN', 'ROOT')">
+                        <div class="data-table__cell__button">
+                            <p:menuButton styleClass="data-table__action-button">
+                            <p:menuitem id="edit-button" value="Редактировать"
+                                                     oncomplete="PF('customsAddDlg').show()"
+                                                     action="#{customsCatalogBean.editEntity(entity, true)}"
+                                                     update="customsAddDlg">
+                            </p:menuitem>
+                            <p:menuitem id="double-button" value="Сдублировать"
+                                        oncomplete="PF('customsAddDlg').show()"
+                                        action="#{customsCatalogBean.doubleAction(true, entity)}"
+                                        update=":#{p:component('customsAddForm')} customsAddDlg">
+                            </p:menuitem>
+                            <p:menuitem id="delete-button" value="Удалить"
+                                        action="#{customsCatalogBean.setEdeclCustoms(entity)}"
+                                        oncomplete="PF('customsDeleteDlg').show();"
+                                        update=":#{p:component('catalogCustomsFormTable')}">
+                            </p:menuitem>
+                        </p:menuButton>
+                        </div>
+                    </sec:authorize>
+                </p:column>
+            </p:dataTable>
+        </div>
+        <!--<p:blockUI block="customsDataTable" trigger="customsDataTable">
+            LOADING<br/>
+            <p:graphicImage name="/resources/images/ajaxloadingbar.gif"/>
+        </p:blockUI>-->
+    </h:form>
+    <ui:include src="../components/catalogs/customsAdd.xhtml" />
+    <ui:include src="../components/catalogs/customsDelete.xhtml"/>
+</ui:composition>

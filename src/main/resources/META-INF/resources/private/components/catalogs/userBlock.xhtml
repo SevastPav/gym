@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" xmlns:h="http://java.sun.com/jsf/html"
+>
+
+    <p:dialog styleClass="modal-window" header="${userAddBean.userEntity.enabled ? 'Блокировка' : 'Разблокировка'} пользователя"
+              widgetVar="userBlockDlg" modal="true" resizable="false" id="userBlockDlg">
+        <h:form>
+        <div class="modal__add-custom__wrapper">
+            <div class="modal-window__table">
+                <div class="producer__details-table__wrapper">
+                    <div
+                        class="modal-window__confirm-text">Вы уверены что хотите ${userAddBean.userEntity.enabled ? 'заблокировать' : 'разблокировать'} ${userAddBean.userEntity.username}?
+                    </div>
+                </div>
+
+                <div class="modal-window__action-buttons-wrapper modal-window__delete-actions">
+                    <div class="filters__buttons-submit modal-window__confirm-button-wrapper">
+                        <p:commandButton value="${userAddBean.userEntity.enabled ? 'Заблокировать' : 'Разблокировать'}" action="#{userAddBean.toggleBlock}"
+                                         oncomplete="PF('userBlockDlg').hide()" update="userBlockDlg #{p:component('catalogUserFormTable')}"/>
+                    </div>
+                    <div class="modal-window__cancel-button-wrapper">
+                        <p:commandButton value="${userAddBean.userEntity.enabled ? 'Не блокировать' : 'Не разблокировать'}"
+                                         oncomplete="PF('userBlockDlg').hide()" update="userBlockDlg"/>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        </h:form>
+    </p:dialog>
+
+</ui:composition>

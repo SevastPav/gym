@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+>
+<h:head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="shortcut icon" type="image/x-icon" href="#{resource['images:favicon.png']}"/>
+    <h:outputStylesheet name="/style.css" library="css"/>
+    <h:outputStylesheet name="/header.css" library="css"/>
+    <h:outputScript library="js" target="head" name="main.js" />
+    <title><ui:insert name="title">ЦУК</ui:insert></title>
+</h:head>
+
+<h:body class="admin-layout">
+    <ui:param name="DATE_TIME_FORMAT" value="dd.MM.yyyy HH:mm:ss"/>
+    <ui:param name="DATE_TIME_FORMAT_WITHOUT_SECONDS" value="dd.MM.yyyy HH:mm"/>
+    <ui:param name="DATE_FORMAT" value="dd.MM.yyyy"/>
+    <ui:param name="GTD_ID_DATE_FORMAT" value="ddMMyy"/>
+    <ui:debug hotkey="x"/>
+    <h:form>
+        <p:ajaxExceptionHandler update="exceptionDialog"
+                                onexception="PF('exceptionDialog').show();"/>
+        <p:outputPanel
+            rendered="#{pfExceptionHandler.message!=null}">Ошибка: #{pfExceptionHandler.message}</p:outputPanel>
+        <p:dialog id="exceptionDialog" header="Ошибка!" widgetVar="exceptionDialog"
+                  height="500px" width="800px">
+            Сообщение: #{pfExceptionHandler.message} <br/>
+            StackTrace: <h:outputText value="#{pfExceptionHandler.formattedStackTrace}" escape="false"/> <br/>
+
+            <p:button onclick="document.location.href = document.location.href;"
+                      value="Reload!"
+                      rendered="#{pfExceptionHandler.type == 'javax.faces.application.ViewExpiredException'}"/>
+        </p:dialog>
+    </h:form>
+
+    <!--<p:ajaxStatus styleClass="ajax-loader">
+        <f:facet name="start">
+            <div id="loading-overlay">
+                <div id="loading">
+                    <span class="icon-spinner icon-spin icon-large"></span>
+                    <span class="ajax-loader-text">Загрузка..</span>
+                </div>
+            </div>
+        </f:facet>
+
+        <f:facet name="complete">
+            <h:outputText value=""/>
+        </f:facet>
+    </p:ajaxStatus>-->
+    <!--<p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"/>-->
+    <p:dialog id="modal-window_loader" widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+        <h:form id="loaderForm">
+            <div id="loader">
+                <div class="lds-ring-big">
+                    <div class="lds-ring-big_child"></div>
+                    <div class="lds-ring-big_child"></div>
+                    <div class="lds-ring-big_child"></div>
+                    <div class="lds-ring-big_child"></div>
+                    <div class="lds-ring">
+                        <div class="lds-ring_child"></div>
+                        <div class="lds-ring_child"></div>
+                        <div class="lds-ring_child"></div>
+                        <div class="lds-ring_child"></div>
+                    </div>
+                </div>
+                <div class="loader_description">
+                    <ui:repeat var="message" value="#{mainLoaderBean.messages}">
+                        <span class="loader_description_text-row">#{message}</span>
+                    </ui:repeat>
+                </div>
+            </div>
+        </h:form>
+    </p:dialog>
+
+    <p:growl id="growl" showDetail="true" life="5000" autoUpdate="true"/>
+    <div id="header">
+        <div class="expert__main-header__wrapper">
+            <div class="expert__main-header__wrapper-main">
+                <p:panel styleClass="expert__main-header_title">
+                    <h:outputText value="КПС Внешний шлюз ЭПС, версия 1.0"/>
+                </p:panel>
+                <p:megaMenu orientation="horizontal">
+                    <p:menuitem styleClass="header_navigation_page header_user-profile" id="header_user-profile" value="#{authenticationBean.getUserName()}"
+                                url="#"/>
+                    <p:menuitem value="Выйти" url="#{request.contextPath}/logout" />
+                </p:megaMenu>
+            </div>
+            <div class="expert__main-header__wrapper-second">
+                <p:megaMenu orientation="horizontal">
+                    <p:menuitem id="header_operative-work" value="Оперативная работа" url="#{request.contextPath}/private/content.xhtml"
+                                disabled="#{request.isUserInRole('ADMIN') or request.isUserInRole('USER_ADMIN')}"
+                                styleClass="header_navigation_page header_operative-work #{view.viewId.contains('content.') ? 'header_navigation_page_active' : ''}">
+                    </p:menuitem>
+                </p:megaMenu>
+            </div>
+        </div>
+    </div>
+    <div id="content">
+        <h:panelGroup>
+            <ui:insert name="content">Content</ui:insert>
+        </h:panelGroup>
+    </div>
+
+    <div id="right">
+        <ui:insert name="right"></ui:insert>
+    </div>
+
+    <div id="bottom">
+        <ui:insert name="bottom"></ui:insert>
+    </div>
+</h:body>
+
+</html>

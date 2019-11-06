@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:pe="http://primefaces.org/ui/extensions">
+    <p:panel>
+        <ui:include src="../components/catalogs/universalFilter.xhtml">
+            <ui:param name="filtersObject" value="#{participantCatalogBean.filtersObject}"/>
+        </ui:include>
+    </p:panel>
+
+    <!--Временно скрыто-->
+    <h:form styleClass="form__action-buttons" id="tableMenuFormParticipant" rendered="false">
+        <div class="form__action-buttons-wrapper">
+        </div>
+        <p:tabView id="tabViewParticipant" styleClass="header-layout-tabs" dynamic="true"
+                   activeIndex="#{participantCatalogBean.selectedTabIndex}"
+                   tabChangeListener="#{participantCatalogBean.onTabSelect}"
+                   widgetVar="tabViewParticipant">
+            <p:ajax event="tabChange" update=":#{p:component('participantTabContent')}" listener="#{participantCatalogBean.onTabSelect}"/>
+            <p:tab id="tableView" title="Таблица"/>
+            <p:tab id="dataGridView" title="Карточки"/>
+        </p:tabView>
+    </h:form>
+
+    <h:form id="catalogParticipantFormTable">
+        <p:remoteCommand name="onload" update="participantDataTable" autoRun="true" />
+        <p:panel id="participantTabContent" styleClass="tab-content" widgetVar="tabContent">
+            <h:panelGroup rendered="true">
+                <div class="dataTable-wrapper">
+                    <p:dataTable styleClass="producers__data-table" widgetVar="participantDataTable" var="entity"
+                                 value="#{participantCatalogBean.lazyModel}"
+                                 paginator="true"
+                                 rows="15"
+                                 cellspacing="0"
+                                 resizableColumns="true"
+                                 draggableColumns="true"
+                                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink} Количество строк {RowsPerPageDropdown} "
+                                 currentPageReportTemplate="{currentPage} из {totalPages}"
+                                 rowsPerPageTemplate="15,20,25"
+                                 id="participantDataTable" lazy="true"
+                                 paginatorPosition="bottom" disabledTextSelection="false" emptyMessage="Нет данных"
+                                 style="white-space: nowrap;" selectionMode="single"
+                                 rowKey="#{entity.participantId}"
+                                 selection="#{participantCatalogBean.selected}" scrollable="true" scrollWidth="100%">
+                        <p:ajax event="rowSelect" listener="#{participantCatalogBean.onRowSelect}"
+                                update=":#{p:component('tableMenuFormCatalogCustoms')}"/>
+                        <p:ajax event="rowReorder" listener="#{participantCatalogBean.onRowReorder}"/>
+                        <p:column headerText="Код точки подключения" style="width: 250px"
+                                  visible="#{participantCatalogBean.isViewedColumn('participantId')}">
+                            <h:outputText value="#{entity.participantId}"/>
+                        </p:column>
+                        <p:column headerText="Наименование точки подключения" style="width: 160px"
+                                  visible="#{participantCatalogBean.isViewedColumn('name')}">
+                            <h:outputText value="#{entity.name}"/>
+                        </p:column>
+                        <p:column headerText="Транспортный адрес" visible="#{participantCatalogBean.isViewedColumn('transportAddress')}"
+                                  style="width: 160px">
+                            <h:outputText value="#{entity.transportAddress}/"/>
+                        </p:column>
+                        <p:column headerText="Дата начала действия" visible="#{participantCatalogBean.isViewedColumn('startDate')}"
+                                  sortBy="#{entity.startDate}" style="width: 100px">
+                            <h:outputText value="#{entity.startDate}" converter="javax.faces.DateTime">
+                                <f:convertDateTime type="date" pattern="dd.MM.yyyy" timeZone="#{utilsBean.timeZone}"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Дата окончания действия" visible="#{participantCatalogBean.isViewedColumn('endDate')}"
+                                  sortBy="#{entity.endDate}" style="width: 180px">
+                            <h:outputText value="#{entity.endDate}" converter="javax.faces.DateTime">
+                                <f:convertDateTime type="date" pattern="dd.MM.yyyy" timeZone="#{utilsBean.timeZone}"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Информационный оператор" visible="#{participantCatalogBean.isViewedColumn('infBrokerId')}"
+                                  style="width: 160px">
+                            <h:outputText value="#{entity.infBrokerId}"/>
+                        </p:column>
+                        <p:column headerText="Реквизиты основания для подключения" visible="#{participantCatalogBean.isViewedColumn('accInfo')}"
+                                  style="width: 160px">
+                            <h:outputText value="#{entity.accInfo}"/>
+                        </p:column>
+                        <p:column headerText="Реквизиты организации" visible="#{participantCatalogBean.isViewedColumn('orgId')}">
+                            <pe:tooltip id="credPanelTable" widgetVar="credPanelTable#{entity.participantId}" for="showCredsTable"
+                                        position="bottom" showEvent="click" hideDelay="500" fixed="true" >
+                                <div style="pointer-events: all !important;">
+                                    <div class="producer__details-table__title">
+                                        Наименование
+                                    </div>
+                                    <div class="producer__details-table__value">
+                                        <h:outputText value="#{participantCatalogBean.getOrganizationName(entity)}"/>
+                                    </div>
+                                    <h:panelGrid columns="3" style="width: 100%;">
+                                        <p:panel styleClass="producer__details-table__title">
+                                            КПП
+                                        </p:panel>
+                                        <p:panel styleClass="producer__details-table__title">
+                                            ОГРН
+                                        </p:panel>
+                                        <p:panel styleClass="producer__details-table__title">
+                                            ИНН
+                                        </p:panel>
+                                        <p:panel styleClass="producer__details-table__value">
+                                            <h:outputText value="#{participantCatalogBean.getOrganizationKpp(entity)}"/>
+                                        </p:panel>
+                                        <p:panel styleClass="producer__details-table__value">
+                                            <h:outputText value="#{participantCatalogBean.getOrganizationOgrn(entity)}"/>
+                                        </p:panel>
+                                        <p:panel styleClass="producer__details-table__value">
+                                            <h:outputText value="#{participantCatalogBean.getOrganizationInn(entity)}"/>
+                                        </p:panel>
+                                    </h:panelGrid>
+                                    <div class="producer__details-table__title">
+                                        Почтовый адрес
+                                    </div>
+                                    <div class="producer__details-table__value">
+                                        <h:outputText value="#{participantCatalogBean.getOrganizationAddress(entity)}"/>
+                                    </div>
+                                    <div style="display: block; text-align: center;">
+                                        <p:commandLink value="СКОПИРОВАТЬ" id="copyButtonTable"/>
+                                        <pe:clipboard widgetVar="clipCredsTable#{entity.participantId}" id="clipCredsTable"
+                                                      trigger="copyButtonTable" action="copy" text="#{participantCatalogBean.getFullCreds(entity)}" />
+                                    </div>
+                                </div>
+                            </pe:tooltip>
+                            <div style="padding-top: 5pt !important; width: 100%;">
+                                <p:commandLink id="showCredsTable" value="Реквизиты организации" />
+                            </div>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </h:panelGroup>
+            <!--Временно скрыто-->
+            <h:panelGroup rendered="false">
+                <p:dataGrid var="entity" value="#{participantCatalogBean.lazyModel}" columns="3" layout="grid"
+                            rows="12" paginator="true" id="participantDataGrid" lazy="true"
+                            paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink} Количество строк {RowsPerPageDropdown} "
+                            rowsPerPageTemplate="6,12,16"
+                            paginatorPosition="bottom">
+                    <div class="modal-window__table modal-customs-details"
+                         style="width: 100%; height: 100%; padding: 15pt !important; border: 1px solid #b3b3b3; margin: 0 !important; position: relative">
+                        <div>
+                            <div>
+                                <div>
+                                    #{entity.participantId}
+                                </div>
+                                <div class="producer__details-table__value">
+                                    <h:outputText value="#{entity.name}"/>
+                                </div>
+                            </div>
+                            <div class="producer__details-table__title">
+                                Транспортный адрес
+                            </div>
+                            <div class="producer__details-table__value">
+                                <h:outputText value="#{entity.transportAddress}"/>
+                            </div>
+
+                            <h:panelGrid columns="2" style="width: 100%;">
+                                <p:panel styleClass="producer__details-table__title">
+                                    Начало действия
+                                </p:panel>
+                                <p:panel styleClass="producer__details-table__title">
+                                    Окончание действия
+                                </p:panel>
+                                <p:panel styleClass="producer__details-table__value">
+                                    <h:outputText value="#{entity.startDate}">
+                                        <f:converter converterId="javax.faces.DateTime"/>
+                                    </h:outputText>
+                                </p:panel>
+                                <p:panel styleClass="producer__details-table__value">
+                                    <h:outputText value="#{entity.endDate}">
+                                        <f:converter converterId="javax.faces.DateTime"/>
+                                    </h:outputText>
+                                </p:panel>
+                            </h:panelGrid>
+                            <div class="producer__details-table__title">
+                                Информационный оператор
+                            </div>
+                            <div class="producer__details-table__value">
+                                <h:outputText value="#{entity.infBrokerId}"/>
+                            </div>
+                            <div class="producer__details-table__title">
+                                Реквизиты основания для подключения
+                            </div>
+                            <div class="producer__details-table__value">
+                                <h:outputText value="#{entity.accInfo}"/>
+                            </div>
+                        </div>
+                        <div style="padding-top: 5pt !important; width: 100%;">
+                            <p:commandLink value="Реквизиты организации" onclick="PF('credPanel#{entity.participantId}').show()"/>
+                        </div>
+                        <p:panel
+                            style="display: none; position: absolute; top: 55pt; width: calc(100% - 30pt); left: 15pt; padding: 15pt !important; height: calc(100% - 100pt)"
+                            widgetVar="credPanel#{entity.participantId}" closable="true" toggleable="true">
+                            <p:commandButton id="close" style="position: absolute; top:0; right: 0"
+                                             onclick="PF('credPanel#{entity.participantId}').close()"
+                                             icon="ui-icon ui-icon-close"/>
+                            <div class="producer__details-table__title">
+                                Наименование
+                            </div>
+                            <div class="producer__details-table__value">
+                                <h:outputText value="#{participantCatalogBean.getOrganizationName(entity)}"/>
+                            </div>
+
+                            <h:panelGrid columns="3" style="width: 100%;">
+                                <p:panel styleClass="producer__details-table__title">
+                                    КПП
+                                </p:panel>
+                                <p:panel styleClass="producer__details-table__title">
+                                    ОГРН
+                                </p:panel>
+                                <p:panel styleClass="producer__details-table__title">
+                                    ИНН
+                                </p:panel>
+                                <p:panel styleClass="producer__details-table__value">
+                                    <h:outputText value="#{participantCatalogBean.getOrganizationKpp(entity)}"/>
+                                </p:panel>
+                                <p:panel styleClass="producer__details-table__value">
+                                    <h:outputText value="#{participantCatalogBean.getOrganizationOgrn(entity)}"/>
+                                </p:panel>
+                                <p:panel styleClass="producer__details-table__value">
+                                    <h:outputText value="#{participantCatalogBean.getOrganizationInn(entity)}"/>
+                                </p:panel>
+                            </h:panelGrid>
+                            <div class="producer__details-table__title">
+                                Почтовый адрес
+                            </div>
+                            <div class="producer__details-table__value">
+                                <h:outputText value="#{participantCatalogBean.getOrganizationAddress(entity)}"/>
+                            </div>
+                            <div style="display: block; text-align: center;">
+                                <p:commandLink value="СКОПИРОВАТЬ" id="copyButton"/>
+                            </div>
+                            <pe:clipboard id="clipCreds" trigger="copyButton" action="copy"
+                                          text="#{participantCatalogBean.getFullCreds(entity)}"/>
+                        </p:panel>
+                    </div>
+                </p:dataGrid>
+            </h:panelGroup>
+        </p:panel>
+    </h:form>
+</ui:composition>

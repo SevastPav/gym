@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+>
+    <p:tooltip for="@parent">
+        <ui:insert name = "messageInfoTooltip" >
+            <ui:include src = "../tooltips/messageInfoTooltip.xhtml" >
+                <ui:param name = "message" value = "#{message}" />
+            </ui:include>
+        </ui:insert>
+    </p:tooltip>
+    <p:contextMenu for="@parent">
+        <p:menuitem styleClass="infoTable__watch-message" value="Просмотр сообщения"
+                    outcome="/private/components/message/messageView.xhtml?envelopeId=#{message.envelopeId}"
+                    target="_blank"/>
+    </p:contextMenu>
+</ui:composition>

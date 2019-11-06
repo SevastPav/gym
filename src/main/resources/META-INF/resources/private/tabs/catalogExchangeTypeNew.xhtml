@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:sec="http://www.springframework.org/security/tags">
+
+    <p:panel>
+        <ui:include src="../components/catalogs/universalFilter.xhtml">
+            <ui:param name="filtersObject" value="#{exchangeTypeCatalogBean.filtersObject}"/>
+        </ui:include>
+    </p:panel>
+
+    <h:form styleClass="form__action-buttons" id="tableMenuFormCatalogExchangeType">
+        <div class="form__action-buttons-wrapper">
+            <sec:authorize access="hasAnyRole('ADMIN', 'ROOT')">
+                <ui:include src="../components/catalogs/exchangeTypeAdd.xhtml"/>
+                <p:menubar styleClass="table-menu__main">
+                    <p:menuitem styleClass="form__action-buttons__add-new" value="ДОБАВИТЬ ВИД ИНФОРМАЦИОННОГО ОБМЕНА"
+                                oncomplete="PF('exchangeTypeAddDlg').show();"
+                                action="#{exchangeTypeCatalogBean.editEntity(false)}"
+                                update=":#{p:component('exchangeTypeAddDlg')}"/>
+                </p:menubar>
+            </sec:authorize>
+            <p:remoteCommand name="updateExchangeTypeActionsForm" update="@form"/>
+        </div>
+    </h:form>
+
+    <h:form id="catalogExchangeTypeFormTable">
+        <div class="dataTable-wrapper">
+            <p:dataTable styleClass="producers__data-table" widgetVar="exchangeTypeDataTable" var="entity"
+                         value="#{exchangeTypeCatalogBean.lazyModel}"
+                         autoUpdate="true"
+                         paginator="true"
+                         rows="15"
+                         cellspacing="0"
+                         resizableColumns="true"
+                         draggableColumns="true"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink} Количество строк {RowsPerPageDropdown} "
+                         currentPageReportTemplate="{currentPage} из {totalPages}"
+                         rowsPerPageTemplate="3,6,15,20,25"
+                         id="exchangeTypeDataTable" lazy="true"
+                         paginatorPosition="bottom" disabledTextSelection="false" emptyMessage="Нет данных"
+                         tableStyleClass="table__action-buttons-last-cell"
+                         style="white-space: nowrap;" selectionMode="single"
+                         rowKey="#{entity.code}"
+                         selection="#{exchangeTypeCatalogBean.selected}" scrollable="true" scrollWidth="100%">
+
+                <p:ajax event="rowSelect" listener="#{exchangeTypeCatalogBean.onRowSelect}"
+                        update=":#{p:component('tableMenuFormCatalogExchangeType')}"/>
+                <p:ajax event="page"
+                        onstart="PF('statusDialog').show()" oncomplete="updateExchangeTypeActionsForm();PF('statusDialog').hide();"/>
+                <p:ajax event="sort"
+                        onstart="PF('statusDialog').show()" oncomplete="updateExchangeTypeActionsForm();PF('statusDialog').hide();"/>
+                <p:ajax event="rowReorder" listener="#{exchangeTypeCatalogBean.onRowReorder}"/>
+                <p:column headerText="Код обмена" style="width: 250px"
+                          visible="#{exchangeTypeCatalogBean.isViewedColumn('code')}">
+                    <h:outputText value="#{entity.code}"/>
+                </p:column>
+                <p:column headerText="Описание обмена" style="width: 160px"
+                          visible="#{exchangeTypeCatalogBean.isViewedColumn('desc')}">
+                    <h:outputText value="#{entity.desc}"/>
+                </p:column>
+                <p:column resizable="false" style="width: 30px !important;">
+                    <sec:authorize access="hasAnyRole('ADMIN', 'ROOT')">
+                        <div class="data-table__cell__button">
+                            <p:menuButton styleClass="data-table__action-button">
+                                <p:menuitem id="edit-button" value="Редактировать"
+                                            oncomplete="PF('exchangeTypeAddDlg').show()"
+                                            action="#{exchangeTypeCatalogBean.editEntity(entity, true)}"
+                                            update="exchangeTypeAddDlg">
+                                    <f:param name="exchangeTypeId" value="#{entity.code}"/>
+                                </p:menuitem>
+                                <p:menuitem id="delete-button" value="Удалить"
+                                            action="#{exchangeTypeCatalogBean.setExcTypeEintity(entity)}"
+                                            oncomplete="PF('exchangeTypeDeleteDlg').show()"
+                                            update="exchangeTypeDeleteDlg">
+                                    <f:param name="exchangeTypeId" value="#{entity.code}"/>
+                                </p:menuitem>
+                            </p:menuButton>
+                        </div>
+                    </sec:authorize>
+                </p:column>
+            </p:dataTable>
+        </div>
+    </h:form>
+    <ui:include src="../components/catalogs/exchangeTypeAdd.xhtml" />
+    <ui:include src="../components/catalogs/exchangeTypeDelete.xhtml"/>
+</ui:composition>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui" xmlns:f="http://xmlns.jcp.org/jsf/core"
+>
+    <p:dialog styleClass="modal-window" header="Информация об учетной записи ТО" widgetVar="customsDetailsDlg" modal="true" resizable="false"
+              id="customsDetailsDlg">
+        <div style="padding: 0 20px !important;" class="modal-window__table modal-customs-details">
+            <div class="producer__details-table__title">
+                Код ТО учетной записи
+            </div>
+            <div class="producer__details-table__value">
+                <h:outputText value="#{customsCatalogBean.selected.customCode}"/>
+            </div>
+            <div class="producer__details-table__title">
+                Наименование учетной записи
+            </div>
+            <div class="producer__details-table__value">
+                <h:outputText value="#{customsCatalogBean.selected.name}/"/>
+            </div>
+            <div class="producer__details-table__title">
+                Транспортная информация
+            </div>
+            <div class="producer__details-table__value">
+                <h:outputText value="#{customsCatalogBean.selected.transportAddress}/"/>
+            </div>
+            <div class="producer__details-table__title">
+                WMQ-адрес
+            </div>
+            <div class="producer__details-table__value">
+                <h:outputText value="#{customsCatalogBean.selected.wmqAddress}"/>
+
+            </div>
+            <div class="producer__details-table__title">
+                Дата начала действия
+            </div>
+            <div class="producer__details-table__value">
+                <h:outputText value="#{customsCatalogBean.selected.startDate}" converter="javax.faces.DateTime">
+                    <f:convertDateTime type="date" pattern="dd.MM.yyyy" timeZone="#{utilsBean.timeZone}"/>
+                </h:outputText>
+
+            </div>
+            <div class="producer__details-table__title">
+                Дата окончания
+            </div>
+            <div class="producer__details-table__value">
+                <h:outputText value="#{customsCatalogBean.selected.endDate}" converter="javax.faces.DateTime">
+                    <f:convertDateTime type="date" pattern="dd.MM.yyyy" timeZone="#{utilsBean.timeZone}"/>
+                </h:outputText>
+            </div>
+            <div class="filters__buttons-submit modal-window__confirm-button-wrapper">
+                <p:commandButton value="Сдублировать Вид обмена"
+                                 action="#{customsCatalogBean.doubleAction(true, customsCatalogBean.selected)}"
+                                 update=":#{p:component('catalogCustomsFormTable')} @form"
+                                 onstart="PF('statusDialog').show()"
+                                 oncomplete="updateCustomsActionsForm();PF('statusDialog').hide();PF('customsDetailsDlg').hide();PF('customsAddDlg').show();"/>
+            </div>
+        </div>
+    </p:dialog>
+</ui:composition>

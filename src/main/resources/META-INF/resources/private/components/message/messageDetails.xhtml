@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+>
+    <p:dialog styleClass="modal-window" header="Информация о сообщении" widgetVar="messageDetailsDlg" modal="true"
+              resizable="false" id="messageDetailsDlg">
+        <p:tabView rendered="#{message ne null}">
+            <p:tab id="message__details" title="Сообщение">
+
+                <div class="message-details__wrapper">
+                    <ui:include src="common/messageCommonInfo.xhtml">
+                        <ui:param name="message" value="#{message}"/>
+                    </ui:include>
+                    <ui:include src="common/messageDescription.xhtml">
+                        <ui:param name="message" value="#{message}"/>
+                    </ui:include>
+                </div>
+            </p:tab>
+            <p:tab title="Участники">
+                <div class="message-details__wrapper">
+                    <ui:include src="common/messageParticipants.xhtml">
+                        <ui:param name="message" value="#{message}"/>
+                    </ui:include>
+                </div>
+            </p:tab>
+            <p:tab title="Документ">
+                <div class="message-details__wrapper">
+                    <ui:include src="common/messageDocumentInfo.xhtml">
+                        <ui:param name="message" value="#{message}"/>
+                    </ui:include>
+                </div>
+            </p:tab>
+            <p:tab title="Дополнительно">
+                <div class="message-details__wrapper">
+                    <ui:include src="common/messageAdditionalInfo.xhtml">
+                        <ui:param name="message" value="#{message}"/>
+                    </ui:include>
+                </div>
+            </p:tab>
+        </p:tabView>
+    </p:dialog>
+
+</ui:composition>

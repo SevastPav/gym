@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+>
+    <p:tabView value="#{messageInfosBean.messagesViewList}" var="message"
+               activeIndex="#{messageInfosBean.selectedTabIndex}"
+               tabChangeListener="#{messageInfosBean.onTabSelect}" scrollable="true">
+        <p:ajax event="tabClose" listener="#{messageInfosBean.onTabClose}"/>
+        <p:tab title="#{message.messageType} - #{message.envelopeId}" closable="true">
+            <h:outputLink value="../message/messageView.xhtml?envelopeId=#{message.envelopeId}" target="_blank">
+                ПРОСМОТР СООБЩЕНИЯ
+            </h:outputLink>
+            <ui:include src = "../message/messageFormInfo.xhtml" >
+                <ui:param name = "message" value = "#{message}" />
+            </ui:include>
+        </p:tab>
+    </p:tabView>
+</ui:composition>

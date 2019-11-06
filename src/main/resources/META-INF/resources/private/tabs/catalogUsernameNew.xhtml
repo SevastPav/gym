@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:sec="http://www.springframework.org/security/tags">
+    <ui:param name="DATE_TIME_FORMAT" value="dd.MM.yyyy HH:mm:ss"/>
+
+    <p:panel>
+        <ui:include src="../components/catalogs/universalFilter.xhtml">
+            <ui:param name="filtersObject" value="#{userCatalogBean.filtersObject}" />
+        </ui:include>
+    </p:panel>
+
+    <h:form styleClass="form__action-buttons" id="tableMenuFormCatalogUser">
+        <div class="form__action-buttons-wrapper">
+            <p:menubar styleClass="table-menu__main">
+                <p:menuitem styleClass="form__action-buttons__add-new" value="ДОБАВИТЬ ПОЛЬЗОВАТЕЛЯ"
+                            oncomplete="PF('userAddDlg').show();"
+                            action="#{userAddBean.editEntity(false)}"
+                            update=":#{p:component('userAddDlg')}"/>
+            </p:menubar>
+            <p:remoteCommand name="updateUserActionsForm" update="@form"/>
+            <p:menubar styleClass="table-menu__main">
+                <p:menuitem value="ПОКАЗАТЬ ПОЛНУЮ ИНФОРМАЦИЮ" disabled="#{empty userCatalogBean.selected}"
+                            action="#{userAddBean.setViewModeAndUserEntity(userCatalogBean.selected)}"
+                            oncomplete="PF('userAddDlg').show();" update=":#{p:component('userAddDlg')}"/>
+            </p:menubar>
+            <p:selectBooleanCheckbox styleClass="form__action-buttons__checkbox" value="#{userCatalogBean.blockedOnly}" itemLabel="Показать только заблокированных">
+                <p:ajax listener="#{userCatalogBean.showBlockedOnly}" update=":#{p:component('catalogUserFormTable')}"/>
+            </p:selectBooleanCheckbox>
+        </div>
+    </h:form>
+
+    <h:form id="catalogUserFormTable">
+        <div class="dataTable-wrapper">
+            <p:dataTable styleClass="producers__data-table" widgetVar="userDataTable" var="entity"
+                         value="#{userCatalogBean.lazyModel}"
+                         paginator="true"
+                         rows="15"
+                         cellspacing="0"
+                         resizableColumns="false"
+                         draggableColumns="true"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink} Количество строк {RowsPerPageDropdown} "
+                         currentPageReportTemplate="{currentPage} из {totalPages}"
+                         rowsPerPageTemplate="15,20,25"
+                         id="userDataTable" lazy="true"
+                         paginatorPosition="bottom" disabledTextSelection="false" emptyMessage="Нет данных"
+                         selectionMode="single"
+                         rowKey="#{entity.username}"
+                         rowStyleClass="${entity.enabled ? '' : 'row__user-blocked'}"
+                         tableStyleClass="table__icon_first-cell table__action-buttons-last-cell"
+                         selection="#{userCatalogBean.selected}" scrollable="true">
+                <p:ajax event="rowSelect" listener="#{userCatalogBean.onRowSelect}"
+                        update=":#{p:component('tableMenuFormCatalogUser')}"/>
+                <p:ajax event="rowReorder" listener="#{userCatalogBean.onRowReorder}"/>
+                <p:column headerText="Логин"
+                          visible="#{userCatalogBean.isViewedColumn('username')}">
+                    <h:outputText value="#{entity.username}"/>
+                </p:column>
+                <p:column headerText="Фамилия, имя, отчество"
+                          visible="#{userCatalogBean.isViewedColumn('fio')}">
+                    <h:outputText value="#{entity.fio}"/>
+                </p:column>
+                <p:column styleClass="column__tooltip" headerText="Подразделение"
+                          visible="#{userCatalogBean.isViewedColumn('unit')}">
+                    <h:outputText value="#{entity.unit.title}"/>
+                </p:column>
+                <p:column headerText="Роль" visible="#{userCatalogBean.isViewedColumn('role')}">
+                    <h:outputText value="#{entity.role.description}"/>
+                </p:column>
+                <p:column styleClass="column__date" headerText="Дата создания" sortBy="#{entity.creationDate}" visible="#{userCatalogBean.isViewedColumn('creationDate')}">
+                    <h:outputText value="#{entity.creationDate}"
+                                  converter="#{zonedDateTimeConverter.of(DATE_TIME_FORMAT)}"/>
+                </p:column>
+                <p:column styleClass="column__date" headerText="Дата изменения" sortBy="#{entity.modificationDate}" visible="#{userCatalogBean.isViewedColumn('modificationDate')}">
+                    <h:outputText value="#{entity.modificationDate}" converter="#{zonedDateTimeConverter.of(DATE_TIME_FORMAT)}"/>
+                </p:column>
+                <p:column styleClass="column__actions_last" style="width: 30px;" visible="#{not empty userCatalogBean.viewedColumns}">
+                    <sec:authorize access="hasAnyRole('USER_ADMIN', 'ROOT')">
+                        <div class="data-table__cell__button">
+                            <p:menuButton styleClass="data-table__action-button">
+                                <p:menuitem id="edit-button" value="Редактировать"
+                                            oncomplete="PF('userAddDlg').show()"
+                                            action="#{userAddBean.editEntity(entity, true)}"
+                                            update="userAddDlg">
+                                </p:menuitem>
+                                <p:menuitem id="block-button" value="${entity.enabled ? 'Заблокировать' : 'Разблокировать'}"
+                                            action="#{userAddBean.setUserEntity(entity)}"
+                                            oncomplete="PF('userBlockDlg').show()"
+                                            update="userBlockDlg">
+                                    <f:param name="user" value="#{entity.username}"/>
+                                </p:menuitem>
+                                <p:menuitem id="delete-button" value="Удалить"
+                                            action="#{userAddBean.setUserEntity(entity)}"
+                                            oncomplete="PF('userDeleteDlg').show()"
+                                            update="userDeleteDlg">
+                                    <f:param name="user" value="#{entity.username}"/>
+                                </p:menuitem>
+                            </p:menuButton>
+                        </div>
+                    </sec:authorize>
+                </p:column>
+            </p:dataTable>
+        </div>
+    </h:form>
+    <ui:include src="../components/catalogs/userAdd.xhtml"/>
+    <ui:include src="../components/catalogs/userBlock.xhtml"/>
+    <ui:include src="../components/catalogs/userDelete.xhtml"/>
+    <p:confirmDialog global="true">
+        <p:commandButton value="Да" type="button" styleClass="ui-confirmdialog-yes"
+                         icon="ui-icon-check"/>
+        <p:commandButton value="Нет" type="button" styleClass="ui-confirmdialog-no"
+                         icon="ui-icon-close"/>
+    </p:confirmDialog>
+</ui:composition>

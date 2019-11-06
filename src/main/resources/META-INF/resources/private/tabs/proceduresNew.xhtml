@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core">
+
+    <p:panel>
+        <ui:include src="../components/catalogs/universalFilter.xhtml">
+            <ui:param name="filtersObject" value="#{proceduresNewBean.filtersObject}" />
+        </ui:include>
+    </p:panel>
+
+    <h:form styleClass="form__action-buttons" id="tableMenuForm">
+        <p:remoteCommand name="updateProcActionsForm" update="@form"/>
+        <div class="form__action-buttons-wrapper">
+            <ui:include src="../components/procedure/procedureDetails.xhtml" />
+            <p:menubar styleClass="table-menu__main">
+                <p:menuitem value="ПОКАЗАТЬ ПОЛНУЮ ИНФОРМАЦИЮ" disabled="#{proceduresNewBean.selected.size() ne 1 or proceduresNewBean.canRequestArchived()}"
+                            oncomplete="PF('procedureDetailsDlg').show();" update=":#{p:component('procedureDetailsDlg')}"/>
+                <p:menuitem value="ПРОСМОТР СООБЩЕНИЙ" disabled="#{proceduresNewBean.selected.size() ne 1 or proceduresNewBean.canRequestArchived()}"
+                            actionListener="#{messagesNewBean.fromProc(proceduresNewBean.selected, authenticationBean)}"
+                            update="#{p:component('tabContent')}, #{p:component('tabViewAdmin')}"/>
+                <p:menuitem value="ПОСЛЕДОВАТЕЛЬНОСТЬ" disabled="#{empty proceduresNewBean.selected or proceduresNewBean.canRequestArchived()}"
+                            actionListener="#{proceduresNewBean.openSelectedSequences}"/>
+                <p:menuitem value="ЗАПРОСИТЬ ИЗ АРХИВА" disabled="#{not proceduresNewBean.canRequestArchived()}"
+                            oncomplete="PF('requestArchivedDlg').show();" update=":#{p:component('requestArchivedDlg')}" />
+            </p:menubar>
+        </div>
+
+        <p:selectCheckboxMenu styleClass="columns-toggler" id="columnsView" value="#{proceduresNewBean.viewedColumns}" label="ВИД">
+            <f:selectItems value="#{proceduresNewBean.allColumns}" itemValue="#{c}" var="c" itemLabel="#{c.label}"/>
+            <f:attribute name="listObjects" value="#{proceduresNewBean.allColumns}"/>
+            <f:converter converterId="ru.renue.eps.expert.converter.ColumnsConverter"/>
+            <p:ajax listener="#{proceduresNewBean.onColumnsChange}" update=":#{p:component('proceduresFormTable')}"/>
+        </p:selectCheckboxMenu>
+    </h:form>
+
+    <h:form id="proceduresFormTable">
+        <div class="dataTable-wrapper">
+            <!--TODO: Посмотреть, можно ли в паджинатор сделать отдельный контроллер-инпут, в который можно вводить произвольную страницу и потом переходить по ней(как на прототипах)-->
+            <p:dataTable styleClass="producers__data-table" widgetVar="dataTable" var="entity"
+                         value="#{proceduresNewBean.lazyModel}"
+                         paginator="true"
+                         rows="15"
+                         cellspacing="0"
+                         resizableColumns="true"
+                         draggableColumns="true"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink} Количество строк {RowsPerPageDropdown} "
+                         currentPageReportTemplate="{currentPage} из {totalPages}"
+                         rowsPerPageTemplate="15,20,25"
+                         id="dataTable" lazy="true"
+                         paginatorPosition="bottom" disabledTextSelection="false" emptyMessage="Нет данных"
+                         style="white-space: nowrap;" selectionMode="multipleNoMeta"
+                         rowSelectMode="add"
+                         rowStyleClass="${entity.archived ? (proceduresNewBean.isUnpacking(entity) ? 'row__procedure-unpacking' : 'row__procedure-archived') : ''}"
+                         rowKey="#{entity.processId}_#{entity.archived}"
+                         selection="#{proceduresNewBean.selected}" scrollable="true" scrollWidth="100%">
+                <p:ajax event="rowSelect" listener="#{proceduresNewBean.onRowSelect}"
+                        update=":#{p:component('tableMenuForm')}"/>
+                <p:ajax event="rowUnselect" update=":#{p:component('tableMenuForm')}"/>
+                <p:ajax event="page"
+                        onstart="PF('statusDialog').show()" oncomplete="updateProcActionsForm();PF('statusDialog').hide();"/>
+                <p:ajax event="sort"
+                        onstart="PF('statusDialog').show()" oncomplete="updateProcActionsForm();PF('statusDialog').hide();"/>
+                <p:ajax event="rowReorder" listener="#{proceduresNewBean.onRowReorder}"/>
+                <p:column headerText="Идентификатор процедуры" style="width: 250px"
+                          visible="#{proceduresNewBean.isViewedColumn('processId')}" >
+                    <h:outputText value="#{entity.processId}"/>
+                </p:column>
+                <p:column headerText="Регистрационный номер ДТ" style="width: 160px"
+                          visible="#{proceduresNewBean.isViewedColumn('gtdIdCustCode')}">
+                    <h:outputText value="#{entity.gtdIdCustCode}/"/>
+                    <h:outputText value="#{entity.gtdIdDate}">
+                        <f:convertDateTime pattern="ddMMyy" timeZone="#{utilsBean.timeZone}"/>
+                    </h:outputText>
+                    <h:outputText value="/#{entity.gtdIdRegNum}"/>
+                </p:column>
+                <p:column headerText="Точка подключения" visible="#{proceduresNewBean.isViewedColumn('participantId')}"
+                          resizable="true">
+                    <h:outputText value="#{entity.participantName} (#{entity.participantId})"/>
+                </p:column>
+                <p:column  styleClass="column__date" headerText="Версия обмена" visible="#{proceduresNewBean.isViewedColumn('softVersion')}">
+                    <h:outputText value="#{entity.softVersion}"/>
+                </p:column>
+                <p:column headerText="ТО оформления" visible="#{proceduresNewBean.isViewedColumn('custCode')}"
+                          style="width: 180px">
+                    <h:outputText value="#{entity.customsName} (#{entity.custCode})"/>
+                </p:column>
+                <p:column headerText="Приграничный ТО" visible="#{proceduresNewBean.isViewedColumn('borderCustCode')}"
+                          style="width: 160px">
+                    <h:outputText value="#{entity.borderName} (#{entity.borderCustCode})"/>
+                </p:column>
+                <p:column headerText="Текущий статус процедуры"
+                          visible="#{proceduresNewBean.isViewedColumn('currentState')}" style="width: 220px">
+                    <h:outputText rendered="#{entity.currentState != null}"
+                                  value="#{entity.stateInfo} (#{entity.currentState})"/>
+                </p:column>
+                <p:column headerText="Время перехода в текущий статус"
+                          visible="#{proceduresNewBean.isViewedColumn('currentStateUpdateTime')}" style="width: 160px"
+                          sortBy="#{entity.currentStateUpdateTime}">
+                    <h:outputText value="#{entity.currentStateUpdateTime}" converter="#{zonedDateTimeConverter.of(DATE_TIME_FORMAT, utilsBean.timeZone)}" />
+                </p:column>
+                <p:column headerText="Технология обмена" visible="#{proceduresNewBean.isViewedColumn('exchType')}"
+                          style="width: 110px">
+                    <h:outputText value="#{entity.exchDescription} (#{entity.exchType})"/>
+                </p:column>
+                <p:column headerText="Направление перемещения"
+                          visible="#{proceduresNewBean.isViewedColumn('custProcedureCode')}"
+                          style="width: 180px">
+                    <h:outputText value="#{entity.transferType}#{entity.custProcedureCode}"/>
+                </p:column>
+            </p:dataTable>
+        </div>
+        <!--<p:blockUI block="dataTable" trigger="dataTable">
+            LOADING<br/>
+            <p:graphicImage name="/resources/images/ajaxloadingbar.gif"/>
+        </p:blockUI>-->
+    </h:form>
+    <ui:include src="../components/procedure/requestArchived.xhtml" />
+    <ui:include src="../components/procedure/archivedErrorsDialog.xhtml" />
+</ui:composition>

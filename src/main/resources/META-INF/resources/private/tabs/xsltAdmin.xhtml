@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                template="../templates/masterLayout.xhtml">
+    <ui:define name="header">
+        Справочник XSLT
+    </ui:define>
+    <ui:define id="expert_main-content" name="content">
+        <p:panel>
+            <ui:include src="../components/xslt/xsltFilters.xhtml"></ui:include>
+        </p:panel>
+
+        <h:form enctype="multipart/form-data">
+            <p:fileUpload mode="simple" value="#{loaderBean.file}" sizeLimit="1000000000" required="true"/>
+            <p:inputText styleClass="filters__input" id="albumSoftVersion"
+                         value="#{loaderBean.albumVersion}"
+                         required="true"
+                         style="width: 350px;"/>
+            <p:commandButton value="Загрузить альбом" action="#{loaderBean.saveEntity}" ajax="false" />
+        </h:form>
+        <h:form id="xsltFormTable">
+            <div class="dataTable-wrapper">
+                <p:dataTable styleClass="producers__data-table" widgetVar="dataTable" var="entity"
+                             value="#{xsltsBean.lazyModel}"
+                             paginator="true"
+                             rows="15"
+                             cellspacing="0"
+                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                             rowsPerPageTemplate="15,20,25"
+                             id="dataTable" lazy="true"
+                             paginatorPosition="bottom" disabledTextSelection="false" emptyMessage="Нет данных"
+                             style="white-space: nowrap;" selectionMode="single"
+                             rowKey="#{entity.id}"
+                             selection="#{xsltsBean.selected}" scrollable="true" scrollWidth="100%">
+                    <p:ajax event="rowSelect" istener="#{xsltsBean.onRowSelect}"/>
+                    <p:ajax event="page" listener="#{xsltsBean.pageChange}"/>
+                    <p:ajax event="rowReorder" listener="#{xsltsBean.onRowReorder}"/>
+                    <p:column headerText="Soft version" sortBy="#{entity.softVersion}" style="width: 340px">
+                        <h:outputText value="#{entity.softVersion}"/>
+                    </p:column>
+                    <p:column headerText="documentMode" sortBy="#{entity.documentMode}" style="width: 340px">
+                        <h:outputText value="#{entity.documentMode}"/>
+                    </p:column>
+                </p:dataTable>
+            </div>
+            <p:blockUI block="dataTable" trigger="dataTable">
+                LOADING<br/>
+                <p:graphicImage name="/resources/images/ajaxloadingbar.gif"/>
+            </p:blockUI>
+        </h:form>
+    </ui:define>
+</ui:composition>

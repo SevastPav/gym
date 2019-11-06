@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+>
+
+    <p:panel>
+        <ui:include src="../components/catalogs/universalFilter.xhtml">
+            <ui:param name="filtersObject" value="#{messagesNewBean.filtersObject}" />
+        </ui:include>
+    </p:panel>
+
+    <h:form styleClass="form__action-buttons" id="messagesMenuForm">
+        <p:remoteCommand name="updateMsgActionsForm" update="@form"/>
+        <h:panelGroup rendered="#{messagesNewBean.selected ne null}">
+            <ui:include src="../components/message/messageDetails.xhtml">
+                <ui:param name="message" value="#{messagesNewBean.selected}"/>
+            </ui:include>
+        </h:panelGroup>
+
+        <h:panelGrid columns="2" style="width: 100%">
+            <p:menubar styleClass="table-menu__main">
+                <p:menuitem value="ИНФОРМАЦИЯ" disabled="#{empty messagesNewBean.selected}"
+                            oncomplete="PF('messageDetailsDlg').show();" update=":#{p:component('messageDetailsDlg')}"/>
+                <p:menuitem value="ПОДРОБНАЯ ИНФОРМАЦИЯ"
+                            disabled="#{empty messagesNewBean.selected}"
+                            outcome="/private/components/message/messageView.xhtml?envelopeId=#{messagesNewBean.selected.envelopeId}"
+                            target="_blank"/>
+                <p:menuitem value="ПОСЛЕДОВАТЕЛЬНОСТЬ" disabled="#{empty messagesNewBean.selected}"
+                            outcome="/private/components/sequence/procedureSequence.xhtml?messageId=#{messagesNewBean.selected.envelopeId}"
+                            target="_blank"/>
+            </p:menubar>
+
+                <p:selectCheckboxMenu styleClass="columns-toggler" id="columnsMessagesView" value="#{messagesNewBean.viewedColumns}" label="ВИД">
+                    <f:selectItems value="#{messagesNewBean.allColumns}" itemValue="#{c}" var="c" itemLabel="#{c.label}"/>
+                    <f:attribute name="listObjects" value="#{messagesNewBean.allColumns}"/>
+                    <f:converter converterId="ru.renue.eps.expert.converter.ColumnsConverter"/>
+                    <p:ajax listener="#{messagesNewBean.onColumnsChange}" update=":#{p:component('messagesFormTable')}"/>
+                </p:selectCheckboxMenu>
+            <div/>
+                <h:panelGrid styleClass="showServiceMessages" columns="2" cellpadding="5">
+                    <h:outputText value="Показать служебные сообщения: "/>
+                    <p:toggleSwitch value="#{messagesNewBean.showServiceMessages}">
+                        <p:ajax update=":#{p:component('messagesFormTable')}" onstart="PF('statusDialog').show()"
+                                oncomplete="updateMsgActionsForm();PF('statusDialog').hide();"/>
+                    </p:toggleSwitch>
+                </h:panelGrid>
+        </h:panelGrid>
+    </h:form>
+
+    <h:form id="messagesFormTable">
+
+        <div class="dataTable-wrapper">
+            <p:dataTable styleClass="producers__data-table" widgetVar="dataTableMessages" var="entity"
+                         value="#{messagesNewBean.lazyModel}"
+                         paginator="true"
+                         rows="15"
+                         cellspacing="0"
+                         draggableColumns="true"
+                         resizableColumns="true"
+                         liveResize="true"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink} Количество строк {RowsPerPageDropdown} "
+                         currentPageReportTemplate="{currentPage} из {totalPages}"
+                         rowsPerPageTemplate="15,20,25"
+                         id="dataTableMessages" lazy="true"
+                         paginatorPosition="bottom" disabledTextSelection="false" emptyMessage="Нет данных"
+                         style="white-space: nowrap;" selectionMode="single"
+                         rowKey="#{entity.envelopeId}"
+                         selection="#{messagesNewBean.selected}" scrollable="true" scrollWidth="100%">
+                <p:ajax event="rowSelect" listener="#{messagesNewBean.onRowSelect}"
+                        update=":#{p:component('messagesMenuForm')}"/>
+                <p:ajax event="sort"
+                        onstart="PF('statusDialog').show()" oncomplete="updateMsgActionsForm();PF('statusDialog').hide();"/>
+                <p:ajax event="page"
+                        onstart="PF('statusDialog').show()" oncomplete="updateMsgActionsForm();PF('statusDialog').hide();"/>
+
+                <p:column styleClass="column__date" headerText="Дата/время создания" visible="#{messagesNewBean.isViewedColumn('preparationDatetime')}"
+                          sortBy="#{entity.preparationDatetime}" style="width: 150px">
+                    <h:outputText value="#{entity.preparationDatetime}"
+                                  converter="#{zonedDateTimeConverter.of(DATE_TIME_FORMAT)}"/>
+                </p:column>
+                <p:column  styleClass="column__date" headerText="Дата/время обработки" visible="#{messagesNewBean.isViewedColumn('receiveDate')}"
+                          sortBy="#{entity.receiveDate}" style="width: 150px">
+                    <h:outputText value="#{entity.receiveDate}"
+                                  converter="#{zonedDateTimeConverter.of(DATE_TIME_FORMAT)}"/>
+                    <h:outputText value="#{entity.sendDate}"
+                                  converter="#{zonedDateTimeConverter.of(DATE_TIME_FORMAT)}"/>
+                </p:column>
+                <p:column headerText="Идентификатор сообщения" style="width: 260px"
+                          visible="#{messagesNewBean.isViewedColumn('envelopeId')}">
+                    <h:outputText value="#{entity.envelopeId}"/>
+                </p:column>
+                <p:column headerText="Идентификатор исходного сообщения" visible="#{messagesNewBean.isViewedColumn('initialEnvelopeId')}"
+                          style="width: 260px">
+                    <h:outputText value="#{entity.initialEnvelopeId}"/>
+                </p:column>
+                <p:column headerText="Тип сообщения" visible="#{messagesNewBean.isViewedColumn('messageType')}"
+                          style="width: 260px">
+                    <h:outputText rendered="#{entity.messageType ne null}"
+                                  value="#{entity.msgDesc} (#{entity.messageType})"/>
+                </p:column>
+                <p:column styleClass="column__date" headerText="Версия обмена" visible="#{messagesNewBean.isViewedColumn('softVersion')}"
+                          style="width: 100px">
+                    <h:outputText value="#{entity.softVersion}"/>
+                </p:column>
+                <p:column headerText="ID процедуры" visible="#{messagesNewBean.isViewedColumn('processId')}"
+                          style="width: 260px">
+                    <h:outputText value="#{entity.processId}"/>
+                </p:column>
+                <p:column headerText="Идентификатор связанного входящего сообщения"
+                          style="width: 260px" visible="#{messagesNewBean.isViewedColumn('incomeEnvelopeId')}">
+                    <h:outputText value="#{entity.incomeEnvelopeId}"/>
+                </p:column>
+                <p:column headerText="Транспортный адрес отправителя" visible="#{messagesNewBean.isViewedColumn('senderInformation')}"
+                          style="width: 340px">
+                    <h:outputText value="#{entity.senderInformation}"/>
+                </p:column>
+                <p:column headerText="Транспортный адрес получателя" visible="#{messagesNewBean.isViewedColumn('receiverInformation')}"
+                          style="width: 340px">
+                    <h:outputText value="#{entity.receiverInformation}"/>
+                </p:column>
+
+                <p:column headerText="Точка подключения" visible="#{messagesNewBean.isViewedColumn('participantId')}"
+                          resizable="true" style="width: 160px">
+                    <h:outputText value="#{entity.participantName} (#{entity.participantId})"/>
+                </p:column>
+                <p:column styleClass="column__date" headerText="Код ТО отправителя" visible="#{messagesNewBean.isViewedColumn('senderCustomCode')}"
+                          style="width: 160px">
+                    <h:outputText value="#{entity.senderCustomCode}"/>
+                </p:column>
+                <p:column headerText="Вид информационного обмена ТО-отправителя"
+                          visible="#{messagesNewBean.isViewedColumn('senderExchangeType')}"
+                          style="width: 160px">
+                    <h:outputText value="#{entity.senderExchangeType}"/>
+                </p:column>
+                <p:column styleClass="column__date" headerText="Код ТО получателя" visible="#{messagesNewBean.isViewedColumn('rcvCustomCode')}"
+                          style="width: 160px">
+                    <h:outputText value="#{entity.rcvCustomCode}"/>
+                </p:column>
+                <p:column headerText="Вид информационного обмена ТО-получателя"
+                          visible="#{messagesNewBean.isViewedColumn('rcvExchangeType')}"
+                          style="width: 160px">
+                    <h:outputText value="#{entity.rcvExchangeType}"/>
+                </p:column>
+                <p:column headerText="Идентификатор документа, передаваемого в сообщении"
+                          visible="#{messagesNewBean.isViewedColumn('documentId')}"
+                          style="width: 260px">
+                    <h:outputText value="#{entity.documentId}"/>
+                </p:column>
+                <p:column headerText="Состояние обработки"
+                          visible="#{messagesNewBean.isViewedColumn('resultCode')}"
+                          sortable="false" style="width: 180px">
+                    <h:outputText value="#{entity.resultCode}"/>
+                </p:column>
+                <p:column styleClass="column__date" headerText="Дата/время создания СОА квитанции"
+                          visible="#{messagesNewBean.isViewedColumn('coaDatetime')}"
+                          sortBy="#{entity.coaDatetime}" style="width: 140px">
+                    <h:outputText value="#{entity.coaDatetime}"
+                                  converter="#{zonedDateTimeConverter.of(DATE_TIME_FORMAT)}"/>
+                </p:column>
+                <p:column styleClass="column__date" headerText="Дата/время обработки СОА квитанции"
+                          visible="#{messagesNewBean.isViewedColumn('coaSaveDatetime')}"
+                          sortBy="#{entity.coaSaveDatetime}" style="width: 140px">
+                    <h:outputText value="#{entity.coaSaveDatetime}"
+                                  converter="#{zonedDateTimeConverter.of(DATE_TIME_FORMAT)}"/>
+                </p:column>
+            </p:dataTable><!--
+        <p:blockUI block="dataTableMessages" trigger="dataTableMessages">
+            LOADING<br/>
+            <p:graphicImage name="/resources/images/ajaxloadingbar.gif"/>
+        </p:blockUI>-->
+        </div>
+    </h:form>
+
+</ui:composition>

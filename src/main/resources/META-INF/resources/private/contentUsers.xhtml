@@ -1,0 +1,30 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                template="./templates/masterLayout.xhtml">
+
+    <ui:define name="header">
+
+    </ui:define>
+    <ui:define id="expert_main-content" name="content">
+
+        <h:form styleClass="form__header-tabs">
+            <p:tabView id="tabViewAdmin" styleClass="header-layout-tabs" dynamic="true"
+                       activeIndex="#{authenticationBean.selectedTabIndex}"
+                       tabChangeListener="#{authenticationBean.onTabSelect}"
+                       widgetVar="tabViewAdmin">
+                <p:ajax event="tabChange"
+                        update=":#{p:component('tabContent')}" listener="#{authenticationBean.onTabSelect}" onstart="PF('statusDialog').show()" oncomplete="PF('statusDialog').hide()"/>
+                <p:tab id="userTab" title="Список пользователей">
+                </p:tab>
+            </p:tabView>
+        </h:form>
+        <p:panel id="tabContent" styleClass="tab-content" widgetVar="tabContent">
+            <h:panelGroup rendered="#{authenticationBean.selectedTabIndex==0}">
+                <ui:include src="tabs/catalogUsernameNew.xhtml"/>
+            </h:panelGroup>
+        </p:panel>
+    </ui:define>
+
+</ui:composition>

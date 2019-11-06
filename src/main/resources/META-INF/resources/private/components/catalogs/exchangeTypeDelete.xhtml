@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+>
+
+    <p:dialog styleClass="modal-window" header="Удаление вида информационного обмена"
+              widgetVar="exchangeTypeDeleteDlg" modal="true" resizable="false" id="exchangeTypeDeleteDlg">
+
+        <div class="modal__add-custom__wrapper">
+            <div class="modal-window__table">
+                <div class="producer__details-table__wrapper">
+                    <div class="modal-window__confirm-text">Удалить тип обмена #{exchangeTypeCatalogBean.exchangeTypeDto.code}?</div>
+                </div>
+
+                <div class="modal-window__action-buttons-wrapper modal-window__delete-actions">
+                    <div class="filters__buttons-submit modal-window__confirm-button-wrapper">
+                        <p:commandButton value="УДАЛИТЬ"
+                                         action="#{exchangeTypeCatalogBean.delete}"
+                                         oncomplete="PF('exchangeTypeDeleteDlg').hide()"
+                                         update=":#{p:component('exchangeTypeDeleteDlg')} :#{p:component('catalogExchangeTypeFormTable')}"/>
+                    </div>
+                    <div class="modal-window__cancel-button-wrapper">
+                        <p:commandButton value="НЕ УДАЛЯТЬ"
+                                         oncomplete="PF('exchangeTypeDeleteDlg').hide()"
+                                         update=":#{p:component('exchangeTypeDeleteDlg')}"/>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </p:dialog>
+
+</ui:composition>

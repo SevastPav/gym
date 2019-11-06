@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+    <h:form styleClass="filters_form" id="filterPanelExchangeType" widgetVar="filterPanelExchangeType">
+        <h:outputScript library="js" name="calendar_ru.js" />
+        <p:panel>
+            <p:panel>
+                <p:selectOneMenu styleClass="filters_form_select" id="lazy" value="#{exchangeTypeCatalogBean.selectFilter}" dynamic="true">
+                    <f:selectItem itemLabel="Выберите фильтр" itemValue="" />
+                    <f:selectItems value="#{exchangeTypeCatalogBean.filters}" />
+                </p:selectOneMenu>
+                <p:inputText styleClass="filters_form_value-input" placeholder="Введите значение..." id="lazyText" value="#{exchangeTypeCatalogBean.selectItem}"/>
+                <div class="filters_form_add-item_wrapper">
+                    <h:commandButton styleClass="filters_form_add-item" value=""
+                                     action="#{exchangeTypeCatalogBean.addFilter}"/>
+                </div>
+            </p:panel>
+
+            <div class="filters__buttons-submit"
+                 style="display: inline-block; padding: 10px; text-align: right">
+                <p:commandButton value="ПРИМЕНИТЬ" action="#{exchangeTypeCatalogBean.applyFilter}"
+                                 update=":#{p:component('catalogExchangeTypeFormTable')} @form"
+                                 onclick="dataTableMessages.getPaginator().setPage(0)"/>
+            </div>
+
+            <div class="filters__added-items-wrapper">
+                <ui:repeat var="filter" value="#{exchangeTypeCatalogBean.filters}">
+                    <p:panel
+                        rendered="#{exchangeTypeCatalogBean.filtersObject.isOpened(exchangeTypeCatalogBean.filtersName.get(filter))}">
+                        <div class="filters__added-item">
+                            <h:outputText value="#{filter}"/>
+                            <div class="filters__added-item-delete-wrapper">
+                                <h:commandButton class="filters__added-item-delete" action="#{exchangeTypeCatalogBean.removeFilter(exchangeTypeCatalogBean.filtersName.get(filter))}"
+                                                 update=":#{p:component('catalogExchangeTypeFormTable')} @form"/>
+                            </div>
+                        </div>
+                    </p:panel>
+                </ui:repeat>
+            </div>
+
+        </p:panel>
+    </h:form>
+
+</ui:composition>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:sec="http://www.springframework.org/security/tags"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{authenticationBean.redirectIfAuthenticated()}"/>
+    </f:metadata>
+</h:head>
+<h:body>
+    <sec:authorize access="isAnonymous()">
+        <ui:include src="/private/templates/login_form.xhtml" />
+
+        <h:outputScript library="js" target="head" name="main.js" />
+        <h:outputStylesheet name="/style.css" library="css"/>
+    </sec:authorize>
+    <sec:authorize access="hasRole('ROLE_ADMIN')">
+        hello
+    </sec:authorize>
+</h:body>
+</html>

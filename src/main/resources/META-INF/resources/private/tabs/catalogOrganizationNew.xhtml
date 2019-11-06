@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+>
+
+    <p:panel>
+        <ui:include src="../components/catalogs/universalFilter.xhtml">
+            <ui:param name="filtersObject" value="#{organizationCatalogBean.filtersObject}" />
+        </ui:include>
+    </p:panel>
+
+    <h:form id="catalogOrganizationFormTable">
+        <div class="dataTable-wrapper">
+            <p:dataTable styleClass="producers__data-table" widgetVar="organizationDataTable" var="entity"
+                         value="#{organizationCatalogBean.lazyModel}"
+                         paginator="true"
+                         rows="15"
+                         cellspacing="0"
+                         resizableColumns="true"
+                         draggableColumns="true"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink} Количество строк {RowsPerPageDropdown} "
+                         currentPageReportTemplate="{currentPage} из {totalPages}"
+                         rowsPerPageTemplate="15,20,25"
+                         id="organizationDataTable" lazy="true"
+                         paginatorPosition="bottom" disabledTextSelection="false" emptyMessage="Нет данных"
+                         style="white-space: nowrap;" selectionMode="single"
+                         rowKey="#{entity.orgId}"
+                         selection="#{organizationCatalogBean.selected}" scrollable="true" scrollWidth="100%">
+                <p:ajax event="rowSelect" listener="#{organizationCatalogBean.onRowSelect}"
+                        update=":#{p:component('tableMenuFormCatalogCustoms')}"/>
+                <p:ajax event="rowReorder" listener="#{organizationCatalogBean.onRowReorder}"/>
+                <p:column headerText="Наименование" style="width: 250px"
+                          visible="#{organizationCatalogBean.isViewedColumn('orgName')}">
+                    <h:outputText value="#{entity.orgName}"/>
+                </p:column>
+                <p:column headerText="Почтовый адрес" style="width: 160px"
+                          visible="#{organizationCatalogBean.isViewedColumn('orgMail')}">
+                    <h:outputText value="#{entity.orgMail}"/>
+                </p:column>
+                <p:column headerText="ИНН" visible="#{organizationCatalogBean.isViewedColumn('inn')}"
+                          style="width: 160px">
+                    <h:outputText value="#{entity.inn}" />
+                </p:column>
+                <p:column headerText="КПП" visible="#{organizationCatalogBean.isViewedColumn('kpp')}"
+                          style="width: 100px">
+                    <h:outputText value="#{entity.kpp}"/>
+                </p:column>
+                <p:column headerText="ОГРН" visible="#{organizationCatalogBean.isViewedColumn('orgN')}"
+                          style="width: 180px">
+                    <h:outputText value="#{entity.orgN}"/>
+                </p:column>
+                <p:column headerText="Информационный оператор" visible="#{organizationCatalogBean.isViewedColumn('infBrokerFlag')}"
+                          style="width: 160px">
+                    <h:outputText value="${entity.infBrokerFlag == 1 ? 'Да' : 'Нет'}"/>
+                </p:column>
+                <p:column>
+                    <p:commandButton id="info" style="float: right" icon="ui-icon ui-icon-info" rendered="#{not empty entity.comments}">
+                        <p:tooltip for="info" position="bottom">
+                            #{entity.comments}
+                        </p:tooltip>
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+        </div>
+        <!--<p:blockUI block="organizationDataTable" trigger="organizationDataTable">
+            LOADING<br/>
+            <p:graphicImage name="/resources/images/ajaxloadingbar.gif"/>
+        </p:blockUI>-->
+    </h:form>
+</ui:composition>

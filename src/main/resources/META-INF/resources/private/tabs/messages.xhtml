@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:sec="http://www.springframework.org/security/tags">
+
+    <p:panel>
+        <ui:include src="../components/catalogs/universalFilter.xhtml">
+            <ui:param name="filtersObject" value="#{messagesEdgateBean.filtersObject}"/>
+        </ui:include>
+    </p:panel>
+
+    <h:form styleClass="form__action-buttons" id="tableMenuFormMessagesEdgate">
+        <ui:include src="../components/message/messageNewDetails.xhtml"/>
+
+        <div class="form__action-buttons-wrapper">
+            <p:remoteCommand name="updateMessagesEdgateActionsForm" update="@form"/>
+            <p:menubar styleClass="table-menu__main">
+                <p:menuitem value="ИНФОРМАЦИЯ" disabled="#{empty messagesEdgateBean.selected}"
+                            oncomplete="PF('messageNewDetailsDlg').show();" update=":#{p:component('messageNewDetailsDlg')}"/>
+            </p:menubar>
+        </div>
+        
+        <p:selectCheckboxMenu styleClass="columns-toggler" id="columnsMessagesEdgate"
+                              value="#{messagesEdgateBean.viewedColumns}" label="ВИД">
+            <f:selectItems value="#{messagesEdgateBean.allColumns}" itemValue="#{c}" var="c" itemLabel="#{c.label}"/>
+            <f:attribute name="listObjects" value="#{messagesEdgateBean.allColumns}"/>
+            <f:converter converterId="ru.renue.eps.expert.converter.ColumnsConverter"/>
+            <p:ajax listener="#{messagesEdgateBean.onColumnsChange}" update=":#{p:component('messagesEdgateFormTable')}"/>
+        </p:selectCheckboxMenu>
+    </h:form>
+    
+    <h:form id="messagesEdgateFormTable">
+        <div class="dataTable-wrapper">
+            <p:dataTable styleClass="producers__data-table" widgetVar="messagesEdgateDataTable" var="entity"
+                         value="#{messagesEdgateBean.lazyModel}"
+                         paginator="true"
+                         rows="15"
+                         cellspacing="0"
+                         resizableColumns="true"
+                         draggableColumns="true"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink} Количество строк {RowsPerPageDropdown} "
+                         currentPageReportTemplate="{currentPage} из {totalPages}"
+                         rowsPerPageTemplate="15,20,25"
+                         id="messagesEdgateDataTable" lazy="true"
+                         paginatorPosition="bottom" disabledTextSelection="false" emptyMessage="Нет данных"
+                         style="white-space: nowrap;" selectionMode="single"
+                         rowKey="#{entity.envelopeId}"
+                         selection="#{messagesEdgateBean.selected}" scrollable="true" scrollWidth="100%">
+                <p:ajax event="rowSelect" listener="#{messagesEdgateBean.onRowSelect}"
+                        update=":#{p:component('tableMenuFormMessagesEdgate')}"/>
+                <p:ajax event="page"
+                        onstart="PF('statusDialog').show()" oncomplete="updateMessagesEdgateActionsForm();PF('statusDialog').hide();"/>
+                <p:ajax event="sort"
+                        onstart="PF('statusDialog').show()" oncomplete="updateMessagesEdgateActionsForm();PF('statusDialog').hide();"/>
+                <p:ajax event="rowReorder" listener="#{messagesEdgateBean.onRowReorder}"/>
+                <p:column headerText="Идентификатор сообщения" style="width: 250px"
+                          visible="#{messagesEdgateBean.isViewedColumn('envelopeId')}">
+                    <h:outputText value="#{entity.envelopeId}"/>
+                </p:column>
+                <p:column headerText="Ссылочный идентификатор сообщения" style="width: 250px"
+                          visible="#{messagesEdgateBean.isViewedColumn('initialEnvelopeId')}">
+                    <h:outputText value="#{entity.initialEnvelopeId}"/>
+                </p:column>
+                <p:column headerText="Транспортный адрес отправителя" style="width: 250px"
+                          visible="#{messagesEdgateBean.isViewedColumn('senderInformation')}">
+                    <h:outputText value="#{entity.senderInformation}"/>
+                </p:column>
+                <p:column headerText="Транспортный адрес получателя" style="width: 250px"
+                          visible="#{messagesEdgateBean.isViewedColumn('receiverInformation')}">
+                    <h:outputText value="#{entity.receiverInformation}"/>
+                </p:column>
+                <p:column headerText="Дата и время создания сообщения" visible="#{messagesEdgateBean.isViewedColumn('preparationDateTime')}"
+                          sortBy="#{entity.preparationDateTime}" style="width: 150px">
+                    <h:outputText value="#{entity.preparationDateTime}" converter="#{zonedDateTimeConverter.of(DATE_TIME_FORMAT)}"/>
+                </p:column>
+                <p:column headerText="Версия альбома/Спецификации обмена" style="width: 250px"
+                          visible="#{messagesEdgateBean.isViewedColumn('softVersion')}">
+                    <h:outputText value="#{entity.softVersion}"/>
+                </p:column>
+                <p:column headerText="Вид сообщения" style="width: 250px"
+                          visible="#{messagesEdgateBean.isViewedColumn('messageKind')}">
+                    <h:outputText value="#{entity.messageKind}"/>
+                </p:column>
+                <p:column headerText="Тип сообщения" style="width: 250px"
+                          visible="#{messagesEdgateBean.isViewedColumn('messageType')}">
+                    <h:outputText value="#{entity.messageType}"/>
+                </p:column>
+                <p:column headerText="Идентификатор процесса" style="width: 250px"
+                          visible="#{messagesEdgateBean.isViewedColumn('processId')}">
+                    <h:outputText value="#{entity.processId}"/>
+                </p:column>
+                <p:column headerText="Идентификатор участника ВЭД" style="width: 250px"
+                          visible="#{messagesEdgateBean.isViewedColumn('participantId')}">
+                    <h:outputText value="#{entity.participantId}"/>
+                </p:column>
+                <p:column headerText="Код ТО получателя сообщения" style="width: 250px"
+                          visible="#{messagesEdgateBean.isViewedColumn('receiverCustomsCode')}">
+                    <h:outputText value="#{entity.receiverCustomsCode}"/>
+                </p:column>
+                <p:column headerText="Тип обмена – ТО получателя сообщения" style="width: 250px"
+                          visible="#{messagesEdgateBean.isViewedColumn('receiverExchType')}">
+                    <h:outputText value="#{entity.receiverExchType}"/>
+                </p:column>
+                <p:column headerText="Код ТО отправителя  сообщения" style="width: 250px"
+                          visible="#{messagesEdgateBean.isViewedColumn('senderCustomsCode')}">
+                    <h:outputText value="#{entity.senderCustomsCode}"/>
+                </p:column>
+                <p:column headerText="Вид информационного обмена" style="width: 250px"
+                          visible="#{messagesEdgateBean.isViewedColumn('senderExchType')}">
+                    <h:outputText value="#{entity.senderExchType}"/>
+                </p:column>
+                <p:column headerText="Дата и время обработки сообщения" visible="#{messagesEdgateBean.isViewedColumn('processingnDateTime')}"
+                          sortBy="#{entity.preparationDateTime}" style="width: 150px">
+                    <h:outputText value="#{entity.processingnDateTime}" converter="#{zonedDateTimeConverter.of(DATE_TIME_FORMAT)}"/>
+                </p:column>
+                <p:column headerText="Направления передачи сообщения" style="width: 250px"
+                          visible="#{messagesEdgateBean.isViewedColumn('transferType')}">
+                    <h:outputText value="#{entity.transferType}"/>
+                </p:column>
+                <p:column headerText="Дата и время создания COA" visible="#{messagesEdgateBean.isViewedColumn('coaDateTime')}"
+                          sortBy="#{entity.coaDateTime}" style="width: 150px">
+                    <h:outputText value="#{entity.coaDateTime}" converter="#{zonedDateTimeConverter.of(DATE_TIME_FORMAT)}"/>
+                </p:column>
+                <p:column headerText="Дата и время получения COA" visible="#{messagesEdgateBean.isViewedColumn('coaSaveDateTime')}"
+                          sortBy="#{entity.coaSaveDateTime}" style="width: 150px">
+                    <h:outputText value="#{entity.coaSaveDateTime}" converter="#{zonedDateTimeConverter.of(DATE_TIME_FORMAT)}"/>
+                </p:column>
+                <p:column headerText="Дата и время создания COD" visible="#{messagesEdgateBean.isViewedColumn('codDateTime')}"
+                          sortBy="#{entity.codDateTime}" style="width: 150px">
+                    <h:outputText value="#{entity.codDateTime}" converter="#{zonedDateTimeConverter.of(DATE_TIME_FORMAT)}"/>
+                </p:column>
+                <p:column headerText="Дата и время получения COD" visible="#{messagesEdgateBean.isViewedColumn('codSaveDateTime')}"
+                          sortBy="#{entity.codSaveDateTime}" style="width: 150px">
+                    <h:outputText value="#{entity.codSaveDateTime}" converter="#{zonedDateTimeConverter.of(DATE_TIME_FORMAT)}"/>
+                </p:column>
+                <p:column headerText="Описание результата обработки" style="width: 250px"
+                          visible="#{messagesEdgateBean.isViewedColumn('resultDescription')}">
+                    <h:outputText value="#{entity.resultDescription}"/>
+                </p:column>
+                <p:column headerText="Адрес маршрутизации" style="width: 250px"
+                          visible="#{messagesEdgateBean.isViewedColumn('routerPoint')}">
+                    <h:outputText value="#{entity.routerPoint}"/>
+                </p:column>
+                <p:column headerText="Код результата обработки" style="width: 250px"
+                          visible="#{messagesEdgateBean.isViewedColumn('resultCode')}">
+                    <h:outputText value="#{entity.resultCode}"/>
+                </p:column>
+                <p:column headerText="Тип программного обеспечения" style="width: 250px"
+                          visible="#{messagesEdgateBean.isViewedColumn('softKind')}">
+                    <h:outputText value="#{entity.softKind}"/>
+                </p:column>
+            </p:dataTable>
+        </div>
+    </h:form>
+</ui:composition>

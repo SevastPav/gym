@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+>
+
+    <h:panelGrid columns="1" cellpadding="5">
+        <h:outputText value="ПО:"/>
+
+        <h:outputText value="#{message.softKind}"/>
+
+        <h:outputText value="Создание COA:"/>
+        <h:outputText value="#{message.coaDatetime}" rendered="#{message.coaDatetime ne null}"
+                      converter="#{zonedDateTimeConverter.of(DATE_TIME_FORMAT)}"/>
+        <h:outputText value="—" rendered="#{message.coaDatetime == null}"/>
+
+        <h:outputText value="Получение COA:"/>
+        <h:outputText value="#{message.coaSaveDatetime}" rendered="#{message.coaSaveDatetime ne null}"
+                      converter="#{zonedDateTimeConverter.of(DATE_TIME_FORMAT)}"/>
+        <h:outputText value="—" rendered="#{message.coaSaveDatetime == null}"/>
+
+        <h:outputText value="Обработка в АСВД:"/>
+        <h:outputText value="#{messageInfosBean.getDocStatus(message)}"/>
+
+        <h:outputText value="Статус в АСВД:"/>
+        <h:outputText value="#{messageInfosBean.getDocStatus(message)}"/>
+
+    </h:panelGrid>
+</ui:composition>

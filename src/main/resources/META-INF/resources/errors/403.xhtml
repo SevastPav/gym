@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8"/>
+    <title>Доступ запрещен</title>
+    <style>
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            font: normal 16px "Segoe UI", "Open Sans", sans-serif;
+            height: 100%;
+            background: #fff;
+            text-align: center;
+        }
+
+        .ep-wrap {
+            text-align: center;
+            padding-top: 12%;
+        }
+
+        .ep-holder {
+            display: inline-block;
+        }
+
+        .code {
+            position: relative;
+            font-size: 110px;
+            line-height: 110px;
+            font-weight: bold;
+            color: #144d67;
+        }
+
+        .code-label {
+            font-weight: bold;
+            color: #964679;
+            position: relative;
+            display: inline-block;
+            padding: 5px 0;
+        }
+
+        .code-label:after {
+            content: "";
+            display: block;
+            height: 1px;
+            width: 250px;
+            background: #d2d8e2;
+            position: absolute;
+            left: 50%;
+            margin-left: -125px;
+            bottom: -5px;
+        }
+
+        .code-descr {
+            font-size: 14px;
+            color: #343434;
+            padding: 10px;
+        }
+
+        .bb {
+            font-size: 13px;
+            display: inline-block;
+            color: #fff;
+            background: #11acac;
+            text-decoration: none;
+            padding: 4px 10px;
+        }
+
+        .bb:hover {
+            background: #0f8c8c;
+        }
+    </style>
+</head>
+<body>
+<div class="ep-wrap">
+    <div class="ep-holder">
+        <div class="code">403</div>
+        <div class="code-label">Доступ запрещен!</div>
+        <div class="code-descr">Просмотр этой страницы ограничен.</div>
+        <a href="#{request.contextPath}" class="bb">На главную</a>
+    </div>
+</div>
+
+</body>
+</html>

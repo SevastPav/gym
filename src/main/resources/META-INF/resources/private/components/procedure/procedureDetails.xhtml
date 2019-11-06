@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+>
+    <p:dialog styleClass="modal-window" header="Информация о процедуре" widgetVar="procedureDetailsDlg" modal="true" resizable="false" id="procedureDetailsDlg">
+        <p:tabView rendered="#{not empty proceduresNewBean.selected}">
+            <p:tab id="producer__details" title="Общая информация">
+                <div class="modal-window__table">
+                    <div class="producer__details-table__wrapper">
+                        <div class="producer__details-table__title">
+                            Идентификатор процедуры
+                        </div>
+                        <div class="producer__details-table__value" id="processId">
+                            #{proceduresNewBean.selected.get(0).processId}
+                        </div>
+                    </div>
+
+                    <div class="producer__details-table__wrapper">
+                        <div class="producer__details-table__title">
+                            Регистрационный номер ДТ
+                        </div>
+                        <div class="producer__details-table__value" id="regNum">
+                            #{proceduresNewBean.selected.get(0).gtdIdCustCode}/#{proceduresNewBean.selected.get(0).gtdIdDate}/#{proceduresNewBean.selected.get(0).gtdIdRegNum}
+                        </div>
+                    </div>
+
+                    <div class="#{!empty proceduresNewBean.selected.get(0).participantId ? '' : 'producer__details-table__wrapper__hidden'} producer__details-table__wrapper">
+                        <div class="producer__details-table__title">
+                            Точка подключения
+                        </div>
+                        <div class="producer__details-table__value" id="participantId">
+                            #{proceduresNewBean.selected.get(0).participantName} (#{proceduresNewBean.selected.get(0).participantId})
+                        </div>
+                    </div>
+
+                    <div class="producer__details-table__wrapper">
+                        <div class="producer__details-table__title">
+                            Версия обмена
+                        </div>
+                        <div class="producer__details-table__value" id="softVersion">
+                            #{proceduresNewBean.selected.get(0).softVersion}
+                        </div>
+                    </div>
+
+                    <div class="producer__details-table__wrapper">
+                        <div class="producer__details-table__title">
+                            ТО оформления
+                        </div>
+                        <div class="producer__details-table__value" id="custCode">
+                            #{proceduresNewBean.selected.get(0).customsName} (#{proceduresNewBean.selected.get(0).custCode})
+                        </div>
+                    </div>
+
+                    <div class="producer__details-table__wrapper">
+                        <div class="producer__details-table__title">
+                            Приграничный ТО
+                        </div>
+                        <div class="producer__details-table__value" id="borderCustCode">
+                            #{proceduresNewBean.selected.get(0).borderName} (#{proceduresNewBean.selected.get(0).borderCustCode})
+                        </div>
+                    </div>
+
+                    <div class="producer__details-table__wrapper">
+                        <div class="producer__details-table__title">
+                            Текущий статус процедуры
+                        </div>
+                        <div class="producer__details-table__value" id="currentState">
+                            #{proceduresNewBean.selected.get(0).stateInfo} (#{proceduresNewBean.selected.get(0).currentState})
+                        </div>
+                    </div>
+                    <div class="producer__details-table__wrapper">
+                        <div class="producer__details-table__title">
+                            Время перехода в текущий статус
+                        </div>
+                        <div class="producer__details-table__value" id="setLastStatusTime">
+                            <h:outputText value="#{proceduresNewBean.selected.get(0).currentStateUpdateTime}"
+                                          converter="#{zonedDateTimeConverter.of(DATE_TIME_FORMAT, utilsBean.timeZone)}"/>
+                        </div>
+                    </div>
+
+                    <div class="producer__details-table__wrapper">
+                        <div class="producer__details-table__title">
+                            Технология обмена
+                        </div>
+                        <div class="producer__details-table__value" id="exchType">
+                            #{proceduresNewBean.selected.get(0).exchDescription} (#{proceduresNewBean.selected.get(0).exchType})
+                        </div>
+                    </div>
+
+                    <div class="producer__details-table__wrapper">
+                        <div class="producer__details-table__title">
+                            Направление перемещения
+                        </div>
+                        <div class="producer__details-table__value" id="direction">
+                            #{proceduresNewBean.selected.get(0).transferType}#{proceduresNewBean.selected.get(0).custProcedureCode}
+                        </div>
+                    </div>
+                </div>
+            </p:tab>
+            <p:tab title="Статусные переходы">
+                <p:dataTable styleClass="modal-window__table__two-columns" style="margin-top: 14px" var="status"
+                             value="#{proceduresNewBean.getStatuses(proceduresNewBean.selected.get(0).processId)}">
+                    <p:column headerText="Статус" style="width: 70%;">
+                        <h:outputText value="#{status.description} (#{status.code})"/>
+                    </p:column>
+                    <p:column headerText="Время" style="width: 30%;">
+                        <h:outputText value="#{status.setStatusTime}"
+                                      converter="#{zonedDateTimeConverter.of(DATE_TIME_FORMAT)}"/>
+                    </p:column>
+                </p:dataTable>
+            </p:tab>
+        </p:tabView>
+    </p:dialog>
+
+</ui:composition>

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+>
+    <h:form styleClass="filters_form" widgetVar="filterPanelUser" id="#{filtersObject.formId}" >
+        <h:outputScript library="js" name="calendar_ru.js" />
+        <p:panel>
+            <p:panel>
+                <p:selectOneMenu styleClass="filters_form_select" id="lazy" value="#{filtersObject.currentFilter}" dynamic="true">
+                    <f:selectItem itemLabel="Выберите фильтр" itemValue="" />
+                    <f:selectItems value="#{filtersObject.filtersNameIdMap.keySet()}"/>
+                    <p:ajax partialSubmit="true" update="@form"/>
+                    <p:ajax partialSubmit="true" update="add-filter-button"/>
+                </p:selectOneMenu>
+                <p:inputText styleClass="filters_form_value-input" placeholder="Введите значение..." id="lazyText" value="#{filtersObject.currentItem}"
+                             rendered="#{filtersObject.isTextFilter()}" >
+                    <p:ajax event="keyup" listener="#{filtersObject.updateButton}"/>
+                </p:inputText>
+                <p:selectOneMenu
+                    id="selectOneUnitFilter"
+                    value="#{filtersObject.currentItem}"
+                    styleClass="filters_form_select" effect="fold" editable="false"
+                    rendered="#{filtersObject.isListFilter()}">
+                    <f:selectItems value="#{filtersObject.currentListItems}" var="e" itemLabel="#{e.left}" itemValue="#{e.right}"/>
+                    <p:ajax partialSubmit="true" update="add-filter-button"/>
+                </p:selectOneMenu>
+                <p:autoComplete
+                    value="#{filtersObject.currentListFiltersValues}"
+                    styleClass="filters_form_autocomplete-input"
+                    multiple="true" var="p"
+                    itemLabel="#{p.label}"
+                    itemValue="#{p}"
+                    converter="#{serializableConverter}"
+                    completeMethod="#{filtersObject.currentCompleteMethod.apply}" maxResults="15"
+                    rendered="#{filtersObject.isAutocompleteFilter()}">
+                    <p:ajax partialSubmit="true" event="itemSelect" update="add-filter-button"/>
+                    <p:ajax partialSubmit="true" event="change" update="add-filter-button"/>
+                    <p:ajax partialSubmit="true" event="itemUnselect" update="add-filter-button"/>
+                </p:autoComplete>
+                <div class="${filtersObject.isGtdFilter() ? 'filters__declNumber-wrapper' : 'modal__row-hidden'}">
+                        <p:inputText styleClass="filters__input filters__declNumber" id="gtdIdCustCode"
+                                     maxlength="8"
+                                     autocomplete="off"
+                                     value="#{filtersObject.gtdFilterCustCode}"
+                                     onkeyup="onInputMaxLength(this)"
+                                     style="width: 100px; border-right: 0 !important;"
+                                     rendered="#{filtersObject.isGtdFilter()}">
+                            <p:ajax partialSubmit="true" event="keyup" update="add-filter-button"/>
+                            <p:ajax partialSubmit="true" event="blur" update="add-filter-button"/>
+                        </p:inputText>
+                    <h:outputText styleClass="filters__declNumber_delimiter" value="/" rendered="#{filtersObject.isGtdFilter()}"/>
+                        <p:inputText styleClass="filters__input filters__declNumber" id="gtdIdDate"
+                                     value="#{filtersObject.gtdFilterDate}"
+                                     onkeyup="onInputMaxLength(this)"
+                                     autocomplete="off"
+                                     maxlength="6"
+                                     style="min-width: 85px !important; width: 85px !important; border-left: 0 !important; border-right: 0 !important; "
+                                     rendered="#{filtersObject.isGtdFilter()}"
+                                     converter="javax.faces.DateTime">
+                            <f:convertDateTime type="date" pattern="ddMMyy" timeZone="#{utilsBean.timeZone}"/>
+                            <p:ajax partialSubmit="true" event="keyup" update="add-filter-button"/>
+                            <p:ajax partialSubmit="true" event="blur" update="add-filter-button"/>
+                        </p:inputText>
+                    <h:outputText styleClass="filters__declNumber_delimiter" value="/" rendered="#{filtersObject.isGtdFilter()}"/>
+                        <p:inputText styleClass="filters__input filters__declNumber" id="gtdIdRegNum"
+                                     maxlength="10"
+                                     autocomplete="off"
+                                     onkeyup="onInputMaxLength(this)"
+                                     value="#{filtersObject.gtdFilterRegNum}"
+                                     style="width: 100px; border-left: 0 !important;"
+                                     rendered="#{filtersObject.isGtdFilter()}">
+                            <p:ajax partialSubmit="true" event="keyup" update="add-filter-button"/>
+                            <p:ajax partialSubmit="true" event="blur" update="add-filter-button"/>
+                        </p:inputText>
+                </div>
+                <p:calendar id="fromCalendarFilter"
+                            locale="ru"
+                            placeholder="От"
+                            styleClass="modal__add-custom__row-calendar"
+                            autocomplete="off"
+                            pattern="dd.MM.yyy"
+                            timeZone="#{utilsBean.timeZone}"
+                            value="#{filtersObject.currentFilterFromDate}"
+                            rendered="#{filtersObject.isCalendarFilter()}">
+                    <p:ajax partialSubmit="true" event="dateSelect" update="add-filter-button"/>
+                    <p:ajax partialSubmit="true" update="add-filter-button"/>
+                </p:calendar>
+                <!--<p:outputLabel styleClass="filters__date-input" for="toCalendarFilter" value=" — " rendered="#{filtersObject.isCalendarFilter()}"/>-->
+                <p:calendar id="toCalendarFilter"
+                            locale="ru"
+                            placeholder="До"
+                            styleClass="modal__add-custom__row-calendar"
+                            autocomplete="off"
+                            pattern="dd.MM.yyy"
+                            timeZone="#{utilsBean.timeZone}"
+                            value="#{filtersObject.currentFilterToDate}"
+                            rendered="#{filtersObject.isCalendarFilter()}">
+                    <p:ajax partialSubmit="true" event="dateSelect" update="add-filter-button"/>
+                    <p:ajax partialSubmit="true" update="add-filter-button"/>
+                </p:calendar>
+                <div class="filters_form_add-item_wrapper">
+                    <h:commandButton id="add-filter-button" styleClass="filters_form_add-item" update="@form"
+                                     disabled="${filtersObject.isDisableAddFilterButton()}"
+                                     actionListener="#{filtersObject.addCurrentFilter}" />
+                </div>
+            </p:panel>
+            <div class="filters__buttons-submit"
+                 style="display: inline-block; padding: 10px; text-align: right">
+                <p:commandButton value="ПРИМЕНИТЬ" ajax="true" action="#{filtersObject.applyCurrentFilters}"
+                                 onclick="PF('statusDialog').show();dataTableMessages.getPaginator().setPage(0)" oncomplete="PF('statusDialog').hide()"/>
+            </div>
+
+            <div class="filters__added-items-wrapper">
+                <ui:repeat var="filter" value="#{filtersObject.selectTextFilterItems.keySet()}">
+                    <p:panel>
+                        <div class="filters__added-item">
+                            <h:outputText value="#{filter.filterLabel} - #{filtersObject.selectTextFilterItems.get(filter)}"/>
+                            <div class="filters__added-item-delete-wrapper">
+                                <h:commandButton class="filters__added-item-delete" action="#{filtersObject.notApplyFilter(filter)}"
+                                                 update="@form"/>
+                            </div>
+                        </div>
+                    </p:panel>
+                </ui:repeat>
+                <ui:repeat var="filter" value="#{filtersObject.selectDateFilterItems.keySet()}">
+                    <p:panel>
+                        <div class="filters__added-item">
+                            <h:outputText value="#{filter.filterLabel} - "/>
+                            <h:outputText value="#{filtersObject.selectDateFilterItems.get(filter).left}">
+                                <f:convertDateTime type="date" pattern="dd.MM.yyyy" timeZone="#{utilsBean.timeZone}"/>
+                            </h:outputText>
+                            <h:outputText value=" - "/>
+                            <h:outputText value="#{filtersObject.selectDateFilterItems.get(filter).right}">
+                                <f:convertDateTime type="date" pattern="dd.MM.yyyy" timeZone="#{utilsBean.timeZone}"/>
+                            </h:outputText>
+                            <div class="filters__added-item-delete-wrapper">
+                                <h:commandButton class="filters__added-item-delete" action="#{filtersObject.notApplyFilter(filter)}"
+                                                 update="@form"/>
+                            </div>
+                        </div>
+                    </p:panel>
+                </ui:repeat>
+                <ui:repeat var="filter" value="#{filtersObject.selectListFiltersItems.keySet()}">
+                    <p:panel>
+                        <div class="filters__added-item">
+                            <h:outputText value="#{filter.filterLabel} - #{filtersObject.formatList(filter)}"/>
+                            <div class="filters__added-item-delete-wrapper">
+                                <h:commandButton class="filters__added-item-delete" action="#{filtersObject.notApplyFilter(filter)}"
+                                                 update="@form"/>
+                            </div>
+                        </div>
+                    </p:panel>
+                </ui:repeat>
+                <ui:repeat var="filter" value="#{filtersObject.selectGtdFiltersItems.keySet()}">
+                    <p:panel>
+                        <div class="filters__added-item">
+                            <h:outputText value="#{filter.filterLabel} - "/>
+                            <h:outputText value="#{filtersObject.selectGtdFiltersItems.get(filter).left}"/>
+                            <h:outputText value="/"/>
+                            <h:outputText value="#{filtersObject.selectGtdFiltersItems.get(filter).middle}">
+                                <f:convertDateTime type="date" pattern="ddMMyy" timeZone="#{utilsBean.timeZone}"/>
+                            </h:outputText>
+                            <h:outputText value="/"/>
+                            <h:outputText value="#{filtersObject.selectGtdFiltersItems.get(filter).right}"/>
+                            <div class="filters__added-item-delete-wrapper">
+                                <h:commandButton class="filters__added-item-delete" action="#{filtersObject.notApplyFilter(filter)}"
+                                                 update="@form"/>
+                            </div>
+                        </div>
+                    </p:panel>
+                </ui:repeat>
+            </div>
+        </p:panel>
+    </h:form>
+
+</ui:composition>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+>
+    <p:dialog styleClass="modal-window" header="Информация об учетной записи ТО" widgetVar="exchTypeDetailsDlg" modal="true" resizable="false"
+              id="exchTypeDetailsDlg">
+        <div style="padding: 0 20px !important;" class="modal-window__table modal-customs-details">
+            <div class="producer__details-table__title">
+                Код обмена
+            </div>
+            <div class="producer__details-table__value">
+                <h:outputText value="#{exchangeTypeCatalogBean.selected.code}"/>
+            </div>
+            <div class="producer__details-table__title">
+                Описание обмена
+            </div>
+            <div class="producer__details-table__value">
+                <h:outputText value="#{exchangeTypeCatalogBean.selected.desc}"/>
+            </div>
+        </div>
+    </p:dialog>
+</ui:composition>

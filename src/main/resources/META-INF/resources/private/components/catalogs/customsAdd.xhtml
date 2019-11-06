@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core" xmlns:c="http://java.sun.com/jsp/jstl/core"
+>
+
+    <p:dialog styleClass="modal-window" header="${customsCatalogBean.editFlag ? 'Редактирование' : 'Добавление'} новой записи ТО"
+              widgetVar="customsAddDlg" modal="true" resizable="false" id="customsAddDlg">
+        <h:form id="customsAddForm">
+        <div class="modal__add-custom__wrapper">
+            <div class="modal-window__table">
+                <div class="modal__add-custom__row-wrapper">
+                    <h:outputLabel class="modal__add-custom__row-label
+                    ${customsCatalogBean.isErrorField(customsCatalogBean.idField) or
+                      customsCatalogBean.isErrorField(customsCatalogBean.idFieldLength) ? 'modal__label-error' : ''}"
+                                   for="customCode"
+                                   value="Код ТО учетной записи"/>
+                    <p:inputText class="modal__add-custom__row-input" id="customCode"
+                                 value="#{customsCatalogBean.customCode}">
+                        <p:ajax event="blur" partialSubmit="true"/>
+                    </p:inputText>
+                </div>
+
+                <div class="modal__add-custom__row-wrapper">
+                    <h:outputLabel class="modal__add-custom__row-label" for="name"
+                                   value="Наименование учетной записи"/>
+                    <p:inputText class="modal__add-custom__row-input" id="name"
+                                 value="#{customsCatalogBean.customsEntity.name}">
+                        <p:ajax event="blur" partialSubmit="true"/>
+                    </p:inputText>
+                </div>
+
+
+                <div class="modal__add-custom__row-wrapper third_space">
+                    <h:outputLabel class="modal__add-custom__row-label"
+                                   value="Транспортная информация"/>
+                    <p:inputText class="modal__add-custom__row-input" id="wmqPrefix"
+                                 disabled="true"
+                                 value="wmq://">
+                        <p:ajax event="blur" partialSubmit="true"/>
+                    </p:inputText>
+                    <p:inputText class="modal__add-custom__row-input" id="manager"
+                                 value="#{customsCatalogBean.managerTransport}">
+                        <p:ajax event="change" listener="#{customsCatalogBean.listenerTransport}" update="@form"/>
+                        <p:ajax event="blur" partialSubmit="true"/>
+                    </p:inputText>
+                    <h:outputLabel value="/"/>
+                    <p:inputText class="modal__add-custom__row-input" id="queue"
+                                 value="#{customsCatalogBean.queueTransport}">
+                        <p:ajax event="change" listener="#{customsCatalogBean.listenerTransport}" update="@form"/>
+                        <p:ajax event="blur" partialSubmit="true"/>
+                    </p:inputText>
+                </div>
+
+
+                <div class="modal__add-custom__row-wrapper">
+                    <h:outputLabel class="modal__add-custom__row-label" for="transportAddress"
+                                   value="Транспортная информация"/>
+                    <p:inputText class="modal__add-custom__row-input" id="transportAddress"
+                                 value="#{customsCatalogBean.customsEntity.transportAddress}">
+                        <p:ajax event="blur" partialSubmit="true"/>
+                    </p:inputText>
+                </div>
+
+                <div class="modal__add-custom__row-wrapper add-custom__row-two-inputs">
+                    <div class="modal__add-custom__row-wrapper">
+                        <p:outputLabel class="modal__add-custom__row-label ${customsCatalogBean.isErrorField(customsCatalogBean.startDate) ? 'modal__label-error' : ''}"
+                                       for="startDate"
+                                       value="Дата начала действия"/>
+                        <p:calendar styleClass="modal__add-custom__row-calendar"
+                                    id="startDate"
+                                    locale="ru"
+                                    showOn="both"
+                                    pattern="dd.MM.yyyy"
+                                    value="#{customsCatalogBean.customsEntity.startDate}">
+                            <p:ajax event="dateSelect" partialSubmit="true"/>
+                        </p:calendar>
+                    </div>
+                    <div class="modal__add-custom__row-wrapper">
+                        <p:outputLabel class="modal__add-custom__row-label" for="endDate" value="Дата окончания"/>
+                        <p:calendar styleClass="modal__add-custom__row-calendar"
+                                    id="endDate"
+                                    locale="ru"
+                                    showOn="both"
+                                    pattern="dd.MM.yyyy"
+                                    value="#{customsCatalogBean.customsEntity.endDate}">
+                            <p:ajax event="dateSelect" partialSubmit="true"/>
+                        </p:calendar>
+                    </div>
+                </div>
+
+                <div class="modal__add-custom__row-wrapper add-custom__row-two-inputs">
+                    <p:outputLabel class="modal__add-custom__row-label ${customsCatalogBean.isErrorField(customsCatalogBean.idField) ? 'modal__label-error' : ''}"
+                                   for="excType"
+                                   value="Вид информационного обмена"/>
+                    <div class="modal__add-custom__row-wrapper modal__add-custom__excType-wrapper">
+                        <div class="modal__add-custom__excType">
+                            <p:selectOneMenu styleClass="filters_form_select" id="excType"
+                                             value="#{customsCatalogBean.excType}" dynamic="true">
+                                <f:selectItem itemValue="#{null}"
+                                              itemLabel="" noSelectionOption="true" />
+                                <f:selectItems value="#{customsCatalogBean.excTypes}"
+                                               var="excType" itemLabel="#{excType.value}"
+                                               itemValue="#{excType.value}"/>
+                                <p:ajax event="change" update="@form" listener="#{customsCatalogBean.listener}"/>
+                            </p:selectOneMenu>
+                            <div class="modal__add-custom__excType_description">
+                                <h:inputText disabled="true" value="#{customsCatalogBean.info}"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="modal__add-custom__row-wrapper">
+                    <h:outputLabel class="modal__add-custom__row-label ${customsCatalogBean.isErrorField(customsCatalogBean.wmqField) ? 'modal__label-error' : ''}"
+                                   for="wmqAddress" value="WMQ Адрес"/>
+                    <p:autoComplete
+                        value="#{customsCatalogBean.wmqString}"
+                        minQueryLength="0"
+                        styleClass="autocomplete_input"
+                        id="wmqAddress"
+                        completeMethod="#{catalogBean.completeWmqDto}" maxResults="10">
+                        <p:ajax event="change" process="@form"/>
+                        <p:ajax event="blur" partialSubmit="true"/>
+                    </p:autoComplete>
+                </div>
+
+                <!--Добавить условие только на редактирование? Спросить у Димы Плутова -->
+                <div class="filters__buttons-submit modal-window__confirm-button-wrapper">
+                    <p:commandButton value="Сдублировать Вид обмена"
+                                     action="#{customsCatalogBean.doubleAction(false, null)}"
+                                     update=":#{p:component('catalogCustomsFormTable')} @form"
+                                     onstart="PF('statusDialog').show()"
+                                     oncomplete="updateCustomsActionsForm();PF('statusDialog').hide();"/>
+                </div>
+            </div>
+
+            <p:messages id="messages" showDetail="false" autoUpdate="true" closable="true"/>
+
+            <div style="padding-bottom: 25px !important;" class="modal-window__action-buttons-wrapper">
+                <div class="filters__buttons-submit modal-window__confirm-button-wrapper">
+                    <p:commandButton value="СОХРАНИТЬ" actionListener="#{customsCatalogBean.addAction(false)}"
+                                     update=":#{p:component('catalogCustomsFormTable')} @form"/>
+                </div>
+                <div class="modal-window__cancel-button-wrapper">
+                    <p:commandButton value="НЕ СОХРАНЯТЬ" actionListener="#{customsCatalogBean.closeAction}"
+                                     oncomplete="PF('customsAddDlg').hide()"/>
+                </div>
+            </div>
+        </div>
+        </h:form>
+    </p:dialog>
+
+</ui:composition>

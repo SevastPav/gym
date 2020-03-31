@@ -25,6 +25,17 @@ dependencies {
 //	compile "org.springframework.boot:spring-boot-starter-data-jpa"
 //	compile "org.springframework.boot:spring-boot-loader-tools"
 	testCompile "junit:junit"
+
+    compile group: 'org.springframework', name: 'spring-context', version: '5.2.0.RELEASE'
+    compile group: 'com.google.guava', name: 'guava', version: '11.0.2'
+	//for web
+	compile group: 'org.springframework', name: 'spring-web', version: '5.2.0.RELEASE'
+	compile group: 'org.primefaces', name: 'primefaces', version:'7.0'
+	compile group: 'org.primefaces.extensions', name: 'primefaces-extensions', version:'7.0.1'
+	compile group: 'org.primefaces.extensions', name: 'resources-ckeditor', version:'7.0.1'
+	compile group: 'org.glassfish', name: 'javax.faces', version: '2.4.0'
+	compile "org.glassfish.jaxb:jaxb-runtime"
+
 }
 
 test {

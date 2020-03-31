@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-
 /**
  * Spring Data  repository for the ClientSystem entity.
  */
@@ -23,6 +22,6 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Long>,
 
     List<UserProfile> findByRoleId(Role role);
 
-    Optional<UserProfile>  findByUserId(Long userId);
+    Optional<UserProfile> findByUserId(Long userId);
 
 }

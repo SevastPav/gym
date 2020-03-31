@@ -1,6 +1,5 @@
 package com.urfu.sod.repository;
 
-import com.urfu.sod.entity.Role;
 import com.urfu.sod.entity.Training;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
